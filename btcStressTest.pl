@@ -1,87 +1,111 @@
 use 5.022;
 use warnings;
+use Getopt::Long;
+use experimental 'signatures';
 
-#commands
-my $bcreg = $ARGV[0] // "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
-my $addresses = $ARGV[1] // 1000;
-my $amount = $ARGV[2] // 0.0499;
-my $fee = $ARGV[3] // 0.0001;
+Getopt::Long::Configure qw(gnu_getopt);
+
+#default params
+my $bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
+my $addresses = 1000;
+my $amount = 0.0499;
+my $fee = 0.0001;
+
+#get params
+GetOptions
+(
+	'bcreg|b=s'    	=> \$bcreg,
+	'addresses|ad=s'	=> \$addresses,
+	'amount|am=s'   	=> \$amount,
+	'fee|f=s'      	=> \$fee,
+) or die "err options!\n";
+
+
 my $money = $amount - $fee;
-say "Executing script\naddresses=$addresses\namount=$amount\nfee=$fee\nmoney=$money";
 
-#data
-my @listAddress;
-my $stringOutput;
-chomp(my $utxo_txid = `$bcreg listunspent | jq -r '.[0] | .txid'`);
-chomp(my $utxo_vout= `$bcreg listunspent | jq -r '.[0] | .vout'`);
+#output params
+say "Executing script $0\n";
+say "parameters:";
+say "bcreg: $bcreg";
+say "addresses: $addresses";
+say "amount: $amount";
+say "fee: $fee";
+say "money: $money";
 
-#functions
-sub milleAddress()
-{
-        for (1 .. $addresses)
-        {
-                chomp(my $address = `$bcreg getnewaddress`);
-                push @listAddress, $address;
-        }
-}
 
 #creo mille address
-say "creazione mille address";
-milleAddress();
+say "\ncreazione mille address..";
+my @listAddress = milleAddress($addresses);
 
-$stringOutput = "\"" .  (join "\": $amount, \"", @listAddress) . "\": $amount";
+#creo stringa contenente tutti gli outputs
+say "creo stringa contenente tutti gli outputs..";
+my $stringOutput = "\"" .  (join "\": $amount, \"", @listAddress) . "\": $amount";
 
-#say "string output:";
-#say $stringOutput;
-my $cmd = "$bcreg -named createrawtransaction inputs='''[ { \"txid\": \"$utxo_txid\", \"vout\": $utxo_vout } ]''' outputs='''{$stringOutput}'''";
-chomp(my $rawtxhex = `$cmd 2>&1`);
+#get utxo_txid
+say "get utxo_txid..";
+my $utxo_txid = get("$bcreg listunspent | jq -r '.[0] | .txid'");
 
+#get utxo_vout
+say "get utxo_vout..";
+my $utxo_vout = get("$bcreg listunspent | jq -r '.[0] | .vout'");
 
-my $cmdSignTx = "$bcreg -named signrawtransaction hexstring=$rawtxhex | jq -r '.hex'";
-chomp(my $signedtx = `$cmdSignTx 2>&1`);
+#bcreg createrawtransaction
+say "bcreg createrawtransaction..";
+my $rawtxhex = get("$bcreg -named createrawtransaction inputs='''[ { \"txid\": \"$utxo_txid\", \"vout\": $utxo_vout } ]''' outputs='''{$stringOutput}'''");
 
+#bcreg createrawtransaction
+say "bcreg signrawtransaction..";
+my $signedtx = get("$bcreg -named signrawtransaction hexstring=$rawtxhex | jq -r '.hex'");
 
-my $cmdSendTX = "$bcreg -named sendrawtransaction hexstring=$signedtx";
-chomp(my $hashTx = `$cmdSendTX 2>&1`);
+#bcreg sendrawtransaction
+say "bcreg sendrawtransaction..";
+my $hashTx = get("$bcreg -named sendrawtransaction hexstring=$signedtx");
 
-#inizio seconda parte
-my $cmdMining = "$bcreg generate 1";
+#mining
+say "mining..";
+my $cmdMining = get("$bcreg generate 1");
+
+#inizio creazione e firma delle tx
+say "inizio creazione e firma delle tx..";
 my @allTx;
-say "inizio creazione e firma delle tx";
 for my $index(0 .. @listAddress)
 {
-        say $index if($index % 20 == 0);
-        my $cmd1 = "$bcreg listunspent | jq -r '.[$index] | .txid'";
-        chomp(my $utxo_txid0 = `$cmd1 2>&1`);
-
-       my $cmd2 = "$bcreg listunspent | jq -r '.[$index] | .vout'";
-        chomp(my $utxo_vout0 = `$cmd2 2>&1`);
-
-       my $cmd3 = "$bcreg getrawchangeaddress";
-        chomp(my $newrecipient0 = `$cmd3 2>&1`);
-
-
-       my $cmd4 = "$bcreg -named createrawtransaction inputs='''[ { \"txid\": \"$utxo_txid0\", \"vout\": $utxo_vout0 } ]''' outputs='''{ \"$newrecipient0\": $money }'''";
-        chomp(my $rawtxhex0 = `$cmd4 2>&1`);
-
-       my $cmd5 = "$bcreg -named signrawtransaction hexstring=$rawtxhex0 | jq -r '.hex'";
-        chomp(my $signedtx0 = `$cmd5 2>&1`);
-
-       push @allTx, "$bcreg -named sendrawtransaction hexstring=$signedtx0";
+	say "$index/$#listAddress.." if($index % 20 == 0);
+	
+	my $utxo_txid0 = get("$bcreg listunspent | jq -r '.[$index] | .txid'");
+	my $utxo_vout0 = get("$bcreg listunspent | jq -r '.[$index] | .vout'");
+	my $newrecipient0 = get("$bcreg getrawchangeaddress");
+	my $rawtxhex0 = get("$bcreg -named createrawtransaction inputs='''[ { \"txid\": \"$utxo_txid0\", \"vout\": $utxo_vout0 } ]''' outputs='''{ \"$newrecipient0\": $money }'''");
+	my $signedtx0 = get("$bcreg -named signrawtransaction hexstring=$rawtxhex0 | jq -r '.hex'");
+	push @allTx, "$bcreg -named sendrawtransaction hexstring=$signedtx0";
 }
-say "fine creazione e firma delle tx";
 
-
+#esecuzione finale
 my $startTime = time();
-say "inizio esecuzione: " . localtime(time);
-
+say "inizio esecuzione: " . localtime($startTime);
 
 for my $tx (@allTx)
 {
-        chomp(my $res =  `$tx 2>&1`);
-        say $res;
+	say get("$tx");
 }
 
 my $endTime = time();
 say "tempo esecuzione: " . ($endTime - $startTime);
 #END
+
+#FUNCTIONS
+sub get($cmd)
+{
+	chomp(my $out = `$cmd 2>&1`);
+	return $cmd;
+}
+
+sub milleAddress($addresses)
+{
+	my @listAddress;
+	for (1 .. $addresses)
+	{
+		push @listAddress, get("$bcreg getnewaddress");
+	}
+	return \@listAddress;
+}
