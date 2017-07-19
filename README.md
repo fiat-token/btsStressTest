@@ -1,2 +1,2 @@
 # btcStressTest
-Perl script for stressing the bitcoin core with multiple transactions
+Scripts for stressing the bitcoin core with multiple transactions
