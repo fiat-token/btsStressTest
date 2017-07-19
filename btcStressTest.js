@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 const { promisify } = require('util');
 const { spawn } = require('child_process');
