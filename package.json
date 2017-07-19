@@ -6,9 +6,14 @@
   "scripts": {
     "node": "node btcStressTest.js",
     "perl": "perl btcStressTest.pl",
-    "up": "git pull"
+    "pull": "git pull",
+    "nup": "run-s pull node",
+    "pup": "run-s pull perl",
+    "push": "git push"
   },
-  "dependencies": {},
+  "dependencies": {
+    "npm-run-all": "^4.0.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DeloitteSystemIntegrationItaly/btcStressTest.git"
