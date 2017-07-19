@@ -6,7 +6,7 @@
   "scripts": {
     "node": "node btcStressTest.js",
     "perl": "perl btcStressTest.pl",
-    "up": "git pull ."
+    "up": "git pull"
   },
   "dependencies": {},
   "repository": {
