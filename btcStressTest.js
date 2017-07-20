@@ -26,23 +26,31 @@ const unitTest = async () =>
 
 const main = async (numberOfTransaction) =>
 {
-    const listSignedTransaction = [];
-    for(const num in range(numberOfTransaction))
+    try
     {
-        console.log(num + "...");
-        const destionationAddress = await generateNewAddress();
-        const utxo = await getUTXOs(1);
-        const rawTransaction = await createRawTransaction(utxo, destionationAddress);
-        const signedTransaction = await signTransaction(rawTransaction);
-        listSignedTransaction.push(signedTransaction);
-    }
+        const listSignedTransaction = [];
+        const UTXOs = await getUTXOs("all"); // numberOfTransaction
+        for(const num in range(numberOfTransaction))
+        {
+            console.log(num + "...");
+            const destionationAddress = await generateNewAddress();
+            const UTXO = UTXOs[num];
+            const rawTransaction = await createRawTransaction(UTXO, destionationAddress);
+            const signedTransaction = await signTransaction(rawTransaction);
+            listSignedTransaction.push(signedTransaction);
+        }
 
-    for(const signed of range(listSignedTransaction))
+        for(const signed of range(listSignedTransaction))
+        {
+            sendTransaction(signed);
+        }
+
+        const hashBlock = await generate();
+    }
+    catch(err)
     {
-        sendTransaction(signed);
+        throw Error(err);
     }
-
-    const hashBlock = await generate();
 }
 
 main(1);
