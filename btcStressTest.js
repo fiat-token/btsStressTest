@@ -15,11 +15,17 @@ const main = async () =>
     console.log("txidvout: " + txidvout.txid);
     let output = {};
     output.address = address;
-    output.amount = 0.04;
+    output.amount = 0.00001;
     let str = bcreg + " createrawtransaction '''[" + JSON.stringify(txidvout) + "]''' '''{" + '"' + address + '": ' +  output.amount + "}'''";
     console.log("str:" + str);
     let rawTransaction = await get(str);
     console.log("raw:" + rawTransaction);
+    let rawTransaction = await get(bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
+    console.log("signing: " + rawTransaction);
+    let resultSend = await get(bcreg + " -named sendrawtransaction hexstring=" + JSOn.parse(rawTransaction).hex);
+    console.log("send:" + resultSend);
+
+    //TODO quando fai sign, controlla che il l'oggetto tornato abbia il campo complete a true
 }
 
 main();
