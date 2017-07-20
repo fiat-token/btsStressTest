@@ -28,7 +28,7 @@ main();
 async function generateNewAddress()
 {
     console.log("generating new address...");
-    const newAddress = await get(bcreg +  " getnewaddress | tr -d \"\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
+    const newAddress = await get(bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
     console.log("newAddress:" + newAddress);
     return newAddress;
 }
