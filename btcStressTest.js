@@ -50,7 +50,7 @@ const main = async (numberOfTransaction) =>
         {
             if(signed % 20 == 0)
             {
-                console.log(signed + );
+                console.log(signed + "...");
             }
 
             sendTransaction(listSignedTransaction[signed]);
