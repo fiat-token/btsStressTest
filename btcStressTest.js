@@ -28,8 +28,9 @@ const main = async (numberOfTransaction) =>
 {
     try
     {
+        //TODO set time begin and end
         const listSignedTransaction = [];
-        const UTXOs = await getUTXOs("all"); // numberOfTransaction
+        const UTXOs = await getUTXOs("all"); // change all with numberOfTransaction
         for(const num in range(numberOfTransaction))
         {
             console.log(num + "...");
@@ -104,24 +105,15 @@ async function generateNewAddress()
     return newAddress;
 }
 
-
-async function getUTXO()
-{
-    console.log("get first UTXO...");
-    const UTXO = await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout, amount: .amount}'"); 
-    console.log("UTXO:" + UTXO);
-    return JSON.parse(UTXO);
-}
-
 async function getUTXOs(nUTXOs)
 {
     console.log("get all UTXOs...");
-    const strUTXOs = await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout, amount: .amount}'"); 
+    const strUTXOs = await get(bcreg + " listunspent"); 
     console.log("UTXOs:" + strUTXOs);
     let objUTXOs = JSON.parse(strUTXOs);
     if(nUTXOs != "all")
     {
-        objUTXOs = objUTXOs.slice(0, nUTXOs);
+        objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
     }
     const filteredUTXOs = map(objUTXOs, (utxo) => { return {txid: utxo.txid, vout: utxo.vout, amount: utxo.amount} });
     return filteredUTXOs;
