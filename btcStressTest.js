@@ -18,7 +18,7 @@ const main = async () =>
     output.address = address;
     let amount = txidvout.amount - fee;
     delete txidvout.amount;
-    let str = bcreg + " createrawtransaction '''[" + JSON.stringify(txidvout) + "]''' '''{" + '"' + address + '": ' +  output.amount + "}'''";
+    let str = bcreg + " createrawtransaction '''[" + JSON.stringify(txidvout) + "]''' '''{" + '"' + address + '": ' +  amount + "}'''";
     console.log("str:" + str);
     let rawTransaction = await get(str);
     console.log("raw:" + rawTransaction);
