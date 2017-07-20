@@ -13,7 +13,13 @@ const main = async () =>
     console.log(address);
     let txidvout = JSON.parse(await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout }'"));
     console.log(txidvout.txid);
-}
+    let output = {};
+    output.address = address;
+    output.amount = 0,04;
+    let str = bcreg + "createrawtransaction '''" + JSON.stringify(txidvout) + " ''' '''" + JSON.stringify(output) + "'''";
+    console.log("str:" + str);
+    let rawTransaction = get(str);
+    console.log("raw:" + rawTransaction);
 
 main();
 
