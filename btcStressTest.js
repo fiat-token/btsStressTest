@@ -63,7 +63,7 @@ const main = async (numberOfTransaction) =>
     }
 }
 
-main(process.argv[3]);
+main(process.argv[2]);
 
 // functions
 
