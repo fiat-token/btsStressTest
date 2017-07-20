@@ -1,27 +1,36 @@
 //'use strict';
 
 const { promisify } = require('util');
-const { spawn } = require('child_process');
-const spawnPromisified = promisify(spawn);
+const { exec } = require('child_process');
+const execPromisified = promisify(exec);
 
-const bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
-
-
-const out = get(bcreg + " getbalance");
-console.log(out);
+//default params
+let bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
 
 
+let out = get("dir");
+out.then(x => console.log(x));
+
+
+
+
+
+// functions
 
 async function get(cmd) 
 {
     try
     {
-        const { stdout, stderr, err } = await spawnPromisified(cmd);
-        console.log('err-', cmd, stderr);
+        const { err, stdout, stderr } = await execPromisified(cmd);
+        if(stderr)
+        {
+            console.log("stderr of " + cmd + " is: " + stderr);
+        }
+
         return stdout;
     }
     catch(err)
     {
-        throw new Error('il new si può omettere ma è più bellino');
+        throw Error('il new si può omettere ma è più bellino');
     }
 }
