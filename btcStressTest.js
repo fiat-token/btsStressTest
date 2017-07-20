@@ -7,10 +7,15 @@ const execPromisified = promisify(exec);
 //default params
 let bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
 
+const main = async () =>
+{
+    let address = await get(bcreg +  " getnewaddress");
+    console.log(address);
+    let txidvout = await get("bcreg listunspent | jq -r '.[0] | { txid: .txid, vout: .vout }'");
+    console.log(txidvout);
+}
 
-let out = get("dir");
-out.then(x => console.log(x));
-
+main();
 
 
 
