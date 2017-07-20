@@ -32,6 +32,7 @@ const main = async (numberOfTransaction) =>
         //TODO set time begin and end
         //TODO change number of thread in nodejs
         //TODO install pm2 for multiprocessing
+        console.log("calculating " + numberOfTransaction + " transactions...");
         const listSignedTransaction = [];
         const UTXOs = await getUTXOs("all"); // change all with numberOfTransaction
         for(const num in range(numberOfTransaction))
