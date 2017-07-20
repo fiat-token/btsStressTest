@@ -20,6 +20,7 @@ const main = async () =>
     console.log("str:" + str);
     let rawTransaction = get(str);
     console.log("raw:" + rawTransaction);
+}
 
 main();
 
