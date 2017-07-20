@@ -7,7 +7,7 @@ const execPromisified = promisify(exec);
 
 //default params
 let bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
-let fee = 0.00001;
+let fee = 0.00000001;
 
 const unitTest = async () =>
 {
