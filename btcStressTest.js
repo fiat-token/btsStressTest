@@ -10,15 +10,15 @@ let bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
 const main = async () =>
 {
     let address = await get(bcreg +  " getnewaddress");
-    console.log(address);
+    console.log("address: " + address);
     let txidvout = JSON.parse(await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout }'"));
-    console.log(txidvout.txid);
+    console.log("txidvout: " + txidvout.txid);
     let output = {};
     output.address = address;
     output.amount = 0,04;
     let str = bcreg + "createrawtransaction '''" + JSON.stringify(txidvout) + " ''' '''" + JSON.stringify(output) + "'''";
     console.log("str:" + str);
-    let rawTransaction = get(str);
+    let rawTransaction = await get(str);
     console.log("raw:" + rawTransaction);
 }
 
