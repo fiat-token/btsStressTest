@@ -37,7 +37,10 @@ const main = async (numberOfTransaction) =>
         const UTXOs = await getUTXOs("all"); // change all with numberOfTransaction
         for(const num in range(numberOfTransaction))
         {
-            console.log(num + "...");
+            if(signed % 50 == 0)
+            {
+                 console.log(num + "...");
+            }
             const destionationAddress = await generateNewAddress();
             const UTXO = UTXOs[num];
             const rawTransaction = await createRawTransaction(UTXO, destionationAddress);
@@ -48,7 +51,7 @@ const main = async (numberOfTransaction) =>
         console.log("sending transactions..");
         for(const signed in listSignedTransaction)
         {
-            if(signed % 20 == 0)
+            if(signed % 50 == 0)
             {
                 console.log(signed + "...");
             }
@@ -56,7 +59,7 @@ const main = async (numberOfTransaction) =>
             sendTransaction(listSignedTransaction[signed]);
         }
 
-        const hashBlock = await generate();
+        //const hashBlock = await generate();
     }
     catch(err)
     {
