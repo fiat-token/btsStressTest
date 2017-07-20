@@ -20,9 +20,9 @@ const main = async () =>
     console.log("str:" + str);
     let rawTransaction = await get(str);
     console.log("raw:" + rawTransaction);
-    let rawTransaction = await get(bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
+    let signedTransaction = await get(bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
     console.log("signing: " + rawTransaction);
-    let resultSend = await get(bcreg + " -named sendrawtransaction hexstring=" + JSOn.parse(rawTransaction).hex);
+    let resultSend = await get(bcreg + " -named sendrawtransaction hexstring=" + JSOn.parse(signedTransaction).hex);
     console.log("send:" + resultSend);
 
     //TODO quando fai sign, controlla che il l'oggetto tornato abbia il campo complete a true
