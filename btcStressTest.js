@@ -8,22 +8,85 @@ const execPromisified = promisify(exec);
 let bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
 let fee = 0.00001;
 
-const main = async () =>
+const unitTest = async () =>
 {
     const destionationAddress = await generateNewAddress();
-    const utxo = await getUTXO();
+    const utxo = await getUTXOs(1);
     const rawTransaction = await createRawTransaction(utxo, destionationAddress);
     const signedTransaction = await signTransaction(rawTransaction);
+
     const hashHexTransaction = await sendTransaction(signedTransaction);
     const hashBlock = await generate();
 
     //TODO quando fai sign, controlla che il l'oggetto tornato abbia il campo complete a true
 }
 
-main();
+//unitTestMain();
 
+
+const main = async (numberOfTransaction) =>
+{
+    const listSignedTransaction = [];
+    for(const num in range(numberOfTransaction))
+    {
+        console.log(num + "...");
+        const destionationAddress = await generateNewAddress();
+        const utxo = await getUTXOs(1);
+        const rawTransaction = await createRawTransaction(utxo, destionationAddress);
+        const signedTransaction = await signTransaction(rawTransaction);
+        listSignedTransaction.push(signedTransaction);
+    }
+
+    for(const signed of range(listSignedTransaction))
+    {
+        sendTransaction(signed);
+    }
+
+    const hashBlock = await generate();
+}
+
+main(1);
 
 // functions
+
+function map(array, transform)
+{
+    const mapped = [];
+    for (const elem of array)
+    {
+        mapped.push(transform(elem));
+    }
+    return mapped;
+}
+
+function range(start, stop, step) 
+{
+    if (!stop) 
+    {
+        // one param defined
+        stop = start;
+        start = 0;
+    }
+
+    if (!step) step = 1;
+    {
+        
+    }
+
+    if ((step > 0 && start >= stop) || (step < 0 && start <= stop)) 
+    {
+        return [];
+    }
+
+    const result = [];
+
+    for (let i = start; step > 0 ? i < stop : i > stop; i += step) 
+    {
+        result.push(i);
+    }
+
+    return result;
+};
 
 async function generateNewAddress()
 {
@@ -33,21 +96,38 @@ async function generateNewAddress()
     return newAddress;
 }
 
+
 async function getUTXO()
 {
-    console.log("get first utxo...");
-    const utxo = await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout, amount: .amount}'"); 
-    console.log("newAddress:" + utxo);
-    return JSON.parse(utxo);
+    console.log("get first UTXO...");
+    const UTXO = await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout, amount: .amount}'"); 
+    console.log("UTXO:" + UTXO);
+    return JSON.parse(UTXO);
 }
 
-async function createRawTransaction(utxo, destionationAddress)
+async function getUTXOs(nUTXOs)
+{
+    console.log("get all UTXOs...");
+    const strUTXOs = await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout, amount: .amount}'"); 
+    console.log("UTXOs:" + strUTXOs);
+    let objUTXOs = JSON.parse(strUTXOs);
+    if(nUTXOs != "all")
+    {
+        objUTXOs = objUTXOs.slice(0, nUTXOs);
+    }
+    const filteredUTXOs = map(objUTXOs, (utxo) => { return {txid: utxo.txid, vout: utxo.vout, amount: utxo.amount} });
+    return filteredUTXOs;
+}
+
+async function createRawTransaction(utxos, destionationAddress)
 {
     console.log("creating raw transaction...");
+    //calcola fee
     const amount = utxo.amount - fee;
+    for(let utxo of utxos)
     delete utxo.amount;
-    const cmd = bcreg + " createrawtransaction '''[" + JSON.stringify(utxo) + "]''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
-    console.log("cmd:" + cmd);
+    const cmd = bcreg + " createrawtransaction '''" + JSON.stringify(utxos) + "''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
+    //console.log("cmd:" + cmd);
     const rawTransaction = await get(cmd);
     console.log("rawTransaction:" + rawTransaction);
     return rawTransaction;
@@ -81,7 +161,8 @@ async function get(cmd)
 {
     try
     {
-        const { err, stdout, stderr } = await execPromisified(cmd);
+        const { err, stdout, stderr } = await execPromisified(cmd, {maxBuffer: 1024 * 50000}); 
+        // potrei usare spawn e andare di chunk, ma ho trovato dei problemi. Setto il buffer elevato per via di "bcreg listunspent"
         if(stderr)
         {
             console.log("stderr of " + cmd + " is: " + stderr);
