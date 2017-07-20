@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "debug": "^2.6.8",
-    "npm-run-all": "^4.0.2"
+    "npm-run-all": "^4.0.2",
+    "pm2": "^2.6.1"
   },
   "repository": {
     "type": "git",
