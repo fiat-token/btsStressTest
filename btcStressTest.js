@@ -15,8 +15,8 @@ const main = async () =>
     console.log("txidvout: " + txidvout.txid);
     let output = {};
     output.address = address;
-    output.amount = 0,04;
-    let str = bcreg + "createrawtransaction '''" + JSON.stringify(txidvout) + " ''' '''" + JSON.stringify(output) + "'''";
+    output.amount = 0.04;
+    let str = bcreg + " createrawtransaction '''" + JSON.stringify(txidvout) + " ''' '''" + JSON.stringify(output) + "'''";
     console.log("str:" + str);
     let rawTransaction = await get(str);
     console.log("raw:" + rawTransaction);
@@ -43,6 +43,6 @@ async function get(cmd)
     }
     catch(err)
     {
-        throw Error('il new si può omettere ma è più bellino');
+        throw Error(err);
     }
 }
