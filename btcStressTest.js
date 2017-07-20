@@ -132,7 +132,7 @@ async function getUTXOs(nUTXOs)
 async function createRawTransaction(UTXO, destionationAddress)
 {
     debug("creating raw transaction...");
-    const amount = UTXO.amount - fee;
+    const amount = (UTXO.amount - fee).toFixed(8);
     delete UTXO.amount;
     const cmd = bcreg + " createrawtransaction '''[" + JSON.stringify(UTXO) + "]''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
     debug("cmd:" + cmd);
