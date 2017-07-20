@@ -23,9 +23,10 @@ const main = async () =>
     let rawTransaction = await get(str);
     console.log("raw:" + rawTransaction);
     let signedTransaction = await get(bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
-    console.log("signing: " + rawTransaction);
-    let resultSend = await get(bcreg + " -named sendrawtransaction hexstring=" + JSON.parse(signedTransaction).hex);
-    console.log("send:" + resultSend);
+    console.log("signing: " + signedTransaction);
+    let hashHexTransaction = await sendTransaction(signedTransaction);
+    console.log("send:" + hashHexTransaction);
+    let hashBlock = await generate();
 
     //TODO quando fai sign, controlla che il l'oggetto tornato abbia il campo complete a true
 }
@@ -33,9 +34,17 @@ const main = async () =>
 main();
 
 
-
-
 // functions
+
+async function sendTransaction(signedTransaction)
+{
+    return await get(bcreg + " -named sendrawtransaction hexstring=" + JSON.parse(signedTransaction).hex);
+}
+
+async function generate()
+{
+    return await get(bcreg + " generate 1");
+}
 
 async function get(cmd) 
 {
