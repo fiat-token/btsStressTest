@@ -9,7 +9,11 @@
     "pull": "git pull",
     "nup": "run-s pull node",
     "pup": "run-s pull perl",
-    "push": "git push"
+    "push": "git push",
+    "startProd": "pm2 start btcStressTest.js --name btcStressTest -i 0",
+    "stopProd": "pm2 stop btcStressTest",
+    "list": "pm2 list",
+    "monit": "pm2 monit"
   },
   "dependencies": {
     "debug": "^2.6.8",

@@ -49,6 +49,7 @@ const main = async (numberOfTransaction) =>
         }
 
         console.log("sending transactions..");
+        const begin = Date.now();
         for(const signed in listSignedTransaction)
         {
             if(signed % 50 == 0)
@@ -58,8 +59,11 @@ const main = async (numberOfTransaction) =>
 
             sendTransaction(listSignedTransaction[signed]);
         }
+        const end =  Date.now();
+        
+        console.log(end - begin);
 
-        //const hashBlock = await generate();
+        const hashBlock = await generate();
     }
     catch(err)
     {
