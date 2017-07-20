@@ -6,16 +6,18 @@ const execPromisified = promisify(exec);
 
 //default params
 let bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
+let fee = 0.00001;
 
 const main = async () =>
 {
     let address = await get(bcreg +  " getnewaddress | tr -d \"\012\"");
     console.log("address: " + address);
-    let txidvout = JSON.parse(await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout }'"));
+    let txidvout = JSON.parse(await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout, amount: .amount}'"));
     console.log("txidvout: " + txidvout.txid);
     let output = {};
     output.address = address;
-    output.amount = 0.00001;
+    let amount = txidvout.amount - fee;
+    delete txidvout.amount;
     let str = bcreg + " createrawtransaction '''[" + JSON.stringify(txidvout) + "]''' '''{" + '"' + address + '": ' +  output.amount + "}'''";
     console.log("str:" + str);
     let rawTransaction = await get(str);
