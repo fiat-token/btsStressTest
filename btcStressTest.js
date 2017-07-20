@@ -11,9 +11,8 @@ const main = async () =>
 {
     let address = await get(bcreg +  " getnewaddress");
     console.log(address);
-    let txidvout = await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout }'");
-    let obj = JSON.parse(txidvout);
-    console.log(obj.txid);
+    let txidvout = JSON.parse(await get(bcreg + " listunspent | jq -r '.[0] | { txid: .txid, vout: .vout }'"););
+    console.log(txidvout.txid);
 }
 
 main();

@@ -7,4 +7,5 @@ HOWTO:
  $ sudo apt-get install -y nodejs
 
  or:
- ./install.sh
+ chmod +x nodejsInstaller.sh
+ ./nodejsInstaller.sh
