@@ -16,7 +16,7 @@ const main = async () =>
     let output = {};
     output.address = address;
     output.amount = 0.04;
-    let str = bcreg + " createrawtransaction '''[" + JSON.stringify(txidvout) + "]''' '''" + '"' + address + '": ' +  output.amount + "'''";
+    let str = bcreg + " createrawtransaction '''[" + JSON.stringify(txidvout) + "]''' '''{" + '"' + address + '": ' +  output.amount + "}'''";
     console.log("str:" + str);
     let rawTransaction = await get(str);
     console.log("raw:" + rawTransaction);
