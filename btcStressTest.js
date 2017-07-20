@@ -61,7 +61,7 @@ const main = async (numberOfTransaction) =>
         }
         const end =  Date.now();
         
-        console.log( "time elapsed in s: " + (end - begin)/1000) ;
+        console.log("time elapsed in s: " + (end - begin)/1000) ;
 
         const hashBlock = await generate();
     }
