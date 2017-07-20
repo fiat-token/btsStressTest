@@ -45,11 +45,12 @@ const main = async (numberOfTransaction) =>
             listSignedTransaction.push(signedTransaction);
         }
 
+        console.log("sending transactions..");
         for(const signed in listSignedTransaction)
         {
             if(signed % 20 == 0)
             {
-                console.log(signed);
+                console.log(signed + );
             }
 
             sendTransaction(listSignedTransaction[signed]);
