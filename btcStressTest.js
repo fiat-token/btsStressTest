@@ -1,5 +1,6 @@
 'use strict';
 
+const debug = require('debug')('btcStressTest:server');
 const { promisify } = require('util');
 const { exec } = require('child_process');
 const execPromisified = promisify(exec);
@@ -43,9 +44,14 @@ const main = async (numberOfTransaction) =>
             listSignedTransaction.push(signedTransaction);
         }
 
-        for(const signed of range(listSignedTransaction))
+        for(const signed in listSignedTransaction)
         {
-            sendTransaction(signed);
+            if(signed % 20 == 0)
+            {
+                console.log(signed);
+            }
+
+            sendTransaction(listSignedTransaction[signed]);
         }
 
         const hashBlock = await generate();
@@ -56,7 +62,7 @@ const main = async (numberOfTransaction) =>
     }
 }
 
-main(1);
+main(process.argv[3]);
 
 // functions
 
@@ -101,17 +107,17 @@ function range(start, stop, step) 
 
 async function generateNewAddress()
 {
-    console.log("generating new address...");
+    debug("generating new address...");
     const newAddress = await get(bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
-    console.log("newAddress:" + newAddress);
+    debug("newAddress:" + newAddress);
     return newAddress;
 }
 
 async function getUTXOs(nUTXOs)
 {
-    console.log("get all UTXOs...");
+    debug("get all UTXOs...");
     const strUTXOs = await get(bcreg + " listunspent"); 
-    //console.log("UTXOs:" + strUTXOs);
+    debug("UTXOs:" + strUTXOs);
     let objUTXOs = JSON.parse(strUTXOs);
     if(nUTXOs != "all")
     {
@@ -123,29 +129,29 @@ async function getUTXOs(nUTXOs)
 
 async function createRawTransaction(UTXO, destionationAddress)
 {
-    console.log("creating raw transaction...");
+    debug("creating raw transaction...");
     const amount = UTXO.amount - fee;
     delete UTXO.amount;
     const cmd = bcreg + " createrawtransaction '''[" + JSON.stringify(UTXO) + "]''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
-    //console.log("cmd:" + cmd);
+    debug("cmd:" + cmd);
     const rawTransaction = await get(cmd);
-    console.log("rawTransaction:" + rawTransaction);
+    debug("rawTransaction:" + rawTransaction);
     return rawTransaction;
 }
 
 async function signTransaction(rawTransaction)
 {
-    console.log("signing raw transaction...");
+    debug("signing raw transaction...");
     const signedTransaction = await get(bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
-    console.log("signedTransaction:" + signedTransaction);
+    debug("signedTransaction:" + signedTransaction);
     return signedTransaction;
 }
 
 async function sendTransaction(signedTransaction)
 {
-    console.log("sending raw transaction...");
+    debug("sending raw transaction...");
     const hashHexTransaction = await get(bcreg + " -named sendrawtransaction hexstring=" + JSON.parse(signedTransaction).hex);
-    console.log("hashHexTransaction:" + hashHexTransaction);
+    debug("hashHexTransaction:" + hashHexTransaction);
     return hashHexTransaction;
 }
 

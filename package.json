@@ -12,6 +12,7 @@
     "push": "git push"
   },
   "dependencies": {
+    "debug": "^2.6.8",
     "npm-run-all": "^4.0.2"
   },
   "repository": {
