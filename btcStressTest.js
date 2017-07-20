@@ -29,6 +29,8 @@ const main = async (numberOfTransaction) =>
     try
     {
         //TODO set time begin and end
+        //TODO change number of thread in nodejs
+        //TODO install pm2 for multiprocessing
         const listSignedTransaction = [];
         const UTXOs = await getUTXOs("all"); // change all with numberOfTransaction
         for(const num in range(numberOfTransaction))
@@ -109,24 +111,22 @@ async function getUTXOs(nUTXOs)
 {
     console.log("get all UTXOs...");
     const strUTXOs = await get(bcreg + " listunspent"); 
-    console.log("UTXOs:" + strUTXOs);
+    //console.log("UTXOs:" + strUTXOs);
     let objUTXOs = JSON.parse(strUTXOs);
     if(nUTXOs != "all")
     {
         objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
     }
-    const filteredUTXOs = map(objUTXOs, (utxo) => { return {txid: utxo.txid, vout: utxo.vout, amount: utxo.amount} });
+    const filteredUTXOs = map(objUTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout, "amount": utxo.amount} });
     return filteredUTXOs;
 }
 
-async function createRawTransaction(utxos, destionationAddress)
+async function createRawTransaction(UTXO, destionationAddress)
 {
     console.log("creating raw transaction...");
-    //calcola fee
-    const amount = utxo.amount - fee;
-    for(let utxo of utxos)
-    delete utxo.amount;
-    const cmd = bcreg + " createrawtransaction '''" + JSON.stringify(utxos) + "''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
+    const amount = UTXO.amount - fee;
+    delete UTXO.amount;
+    const cmd = bcreg + " createrawtransaction '''" + JSON.stringify(UTXO) + "''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
     //console.log("cmd:" + cmd);
     const rawTransaction = await get(cmd);
     console.log("rawTransaction:" + rawTransaction);
