@@ -47,8 +47,8 @@ async function createRawTransaction(utxo, destionationAddress)
     const amount = utxo.amount - fee;
     delete utxo.amount;
     const cmd = bcreg + " createrawtransaction '''[" + JSON.stringify(utxo) + "]''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
-    console.log("str:" + str);
-    const rawTransaction = await get(str);
+    console.log("cmd:" + cmd);
+    const rawTransaction = await get(cmd);
     console.log("rawTransaction:" + rawTransaction);
     return rawTransaction;
 }
