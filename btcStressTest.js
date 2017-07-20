@@ -126,7 +126,7 @@ async function createRawTransaction(UTXO, destionationAddress)
     console.log("creating raw transaction...");
     const amount = UTXO.amount - fee;
     delete UTXO.amount;
-    const cmd = bcreg + " createrawtransaction '''" + JSON.stringify(UTXO) + "''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
+    const cmd = bcreg + " createrawtransaction '''[" + JSON.stringify(UTXO) + "]''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
     //console.log("cmd:" + cmd);
     const rawTransaction = await get(cmd);
     console.log("rawTransaction:" + rawTransaction);
