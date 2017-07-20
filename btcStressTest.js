@@ -37,7 +37,7 @@ const main = async (numberOfTransaction) =>
         const UTXOs = await getUTXOs("all"); // change all with numberOfTransaction
         for(const num in range(numberOfTransaction))
         {
-            if(signed % 50 == 0)
+            if(num % 50 == 0)
             {
                  console.log(num + "...");
             }
