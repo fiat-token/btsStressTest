@@ -52,7 +52,7 @@ class Bitcoin
                 UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
                 console.log(UTXOs);
                 console.log("adesso:");
-                console.log(typeof UTXOs);
+                console.log(UTXOs instanceof Array);
             }
             const senders = JSON.stringify(UTXOs);
             console.log("senders: " + senders);
