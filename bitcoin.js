@@ -1,7 +1,7 @@
 'use strict';
 
 const debug = require('debug')('btcStressTest:server');
-const { get } = require('./libs');
+const { get, map } = require('./libs');
 
 class Bitcoin
 {
