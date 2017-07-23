@@ -73,17 +73,23 @@ class Bitcoin
 
             //calculating receivers
             const obj = {};
+            console.log("type of listAddresses:");
+            console.log(typeof listAddresses);
             for(const address of listAddresses)
             {
+                console.log("one address:");
+                console.log(address);
                 obj.address = amount;
             }
+            console.log("final obj:");
+            console.log(obj);
             const recipients = JSON.stringify(obj);
             console.log("recipients: " + recipients);
 
             const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
             console.log("cmd:" + cmd);
             const rawTransaction = await get(cmd);
-            deconsole.logbug("rawTransaction:" + rawTransaction);
+            console.log("rawTransaction:" + rawTransaction);
             return rawTransaction;
         }
         catch(err)
