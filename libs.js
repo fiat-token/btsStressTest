@@ -1,6 +1,7 @@
 'use strict';
 const { promisify } = require('util');
 const { appendFile } = require('fs');
+const execPromisified = promisify(exec);
 
 const map = (array, transform) =>
 {
