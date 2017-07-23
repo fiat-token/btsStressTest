@@ -1,7 +1,8 @@
 'use strict';
 
 const debug = require('debug')('btcStressTest:server');
-const { get, map, range } = require('./libs');
+const { get, map, range, log } = require('./libs');
+const file = "logForGetUTXOs.log";
 
 class Bitcoin
 {
@@ -37,6 +38,7 @@ class Bitcoin
             debug("get all UTXOs...");
             const strUTXOs = await get(this.bcreg + " listunspent");
             let objUTXOs = JSON.parse(strUTXOs);
+            log(file, JSON.stringify(objUTXOs));
             if(nUTXOs != "all")
             {
                 //objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
@@ -118,7 +120,7 @@ class Bitcoin
         {
             debug("sending raw transaction...");
             const hashHexTransaction = await get(this.bcreg + " -named sendrawtransaction hexstring=" + JSON.parse(signedTransaction).hex);
-            debug("hashHexTransaction:" + hashHexTransaction);
+            debug("hashHexTransaction: " + hashHexTransaction);
             return hashHexTransaction;
         }
         catch(err)

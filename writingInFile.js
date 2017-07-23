@@ -8,8 +8,9 @@ const { log } = require('./libs');
 //default params
 const bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
 const fee = 0.1; // it's a percentage!!
-const quantity = process.argv[2] || 1;
-const file = "listOfhashHexTransaction.txt";
+//const quantity = process.argv[2] || 1;
+const quantity = 1;
+const file = "listOfhashHexTransaction.log";
 
 //creating new object
 const btc = new Bitcoin(bcreg, fee);
