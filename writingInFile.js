@@ -23,7 +23,7 @@ const main = async () =>
         const destionationAddress = await btc.generateNewAddress();
 
         const utxos = await btc.getUTXOs("all");
-        for(utxo of utxos)
+        for(const utxo of utxos)
         {
             const hashHexTransaction = await cssTx(destionationAddress, utxo);
             log(file, hashHexTransaction);
