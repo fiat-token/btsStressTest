@@ -31,7 +31,7 @@ const main = async (quantity) =>
     }
     catch(err)
     {
-        console.log("ERROR: " + err);
+        console.log("Error from main: " + err);
     }
 }
 

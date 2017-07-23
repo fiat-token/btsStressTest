@@ -42,48 +42,55 @@ class Bitcoin
 
     async createRawTransaction(UTXOs, listAddresses)
     {
-        console.log("creating raw transaction...");
-        //calculating senders
-        console.log(typeof UTXOs);
-        if(!(UTXOs instanceof Array))
+        try
         {
-            console.log("UTXOs isn't an array:" + UTXOs);
-            UTXOs = '[' + JSON.stringify(UTXOs) + ']';
-            console.log(UTXOs);
-        }
-        const senders = JSON.stringify(UTXOs);
-        deconsole.logbug("senders: " + senders);
+            console.log("creating raw transaction...");
+            //calculating senders
+            console.log(typeof UTXOs);
+            if(!(UTXOs instanceof Array))
+            {
+                console.log("UTXOs isn't an array:" + UTXOs);
+                UTXOs = '[' + JSON.stringify(UTXOs) + ']';
+                console.log(UTXOs);
+            }
+            const senders = JSON.stringify(UTXOs);
+            console.log("senders: " + senders);
 
-        //calculating amount
-        let totalAmount;
-        console.log("UTXOs: ");
-        console.log(JSON.stringify(UTXOs));
-        for(const utxo of UTXOs)
+            //calculating amount
+            let totalAmount;
+            console.log("UTXOs: ");
+            console.log(JSON.stringify(UTXOs));
+            for(const utxo of UTXOs)
+            {
+                console.log("one elem:");
+                console.log(utxo);
+                totalAmount += utxo.amount;
+                console.log(totalAmount);
+            }
+            totalAmount /= UTXOs.length;
+            console.log("fin totalAmount: " + totalAmount);
+            const amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
+            console.log("amount: " + amount);
+
+            //calculating receivers
+            const obj = {};
+            for(const address of listAddresses)
+            {
+                obj.address = amount;
+            }
+            const recipients = JSON.stringify(obj);
+            debug("recipients: " + recipients);
+
+            const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
+            debug("cmd:" + cmd);
+            const rawTransaction = await get(cmd);
+            debug("rawTransaction:" + rawTransaction);
+            return rawTransaction;
+        }
+        catch(err)
         {
-            console.log("one elem:");
-            console.log(utxo);
-            totalAmount += utxo.amount;
-            console.log(totalAmount);
+            console.log("Error from createRawTransaction: " + err);
         }
-        totalAmount /= UTXOs.length;
-        console.log("fin totalAmount: " + totalAmount);
-        const amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
-        console.log("amount: " + amount);
-
-        //calculating receivers
-        const obj = {};
-        for(const address of listAddresses)
-        {
-            obj.address = amount;
-        }
-        const recipients = JSON.stringify(obj);
-        debug("recipients: " + recipients);
-
-        const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
-        debug("cmd:" + cmd);
-        const rawTransaction = await get(cmd);
-        debug("rawTransaction:" + rawTransaction);
-        return rawTransaction;
     }
 
     async signTransaction(rawTransaction)
