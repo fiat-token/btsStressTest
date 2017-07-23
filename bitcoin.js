@@ -49,11 +49,10 @@ class Bitcoin
             //calculating senders
             if(!(UTXOs instanceof Array))
             {
-                //console.log("UTXOs isn't an array:" + UTXOs);
                 UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
                 console.log(UTXOs);
                 console.log("adesso:");
-                //console.log(typeof UTXOs);
+                console.log(typeof UTXOs);
             }
             const senders = JSON.stringify(UTXOs);
             console.log("senders: " + senders);
@@ -79,12 +78,12 @@ class Bitcoin
                 obj.address = amount;
             }
             const recipients = JSON.stringify(obj);
-            debug("recipients: " + recipients);
+            console.log("recipients: " + recipients);
 
             const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
-            debug("cmd:" + cmd);
+            console.log("cmd:" + cmd);
             const rawTransaction = await get(cmd);
-            debug("rawTransaction:" + rawTransaction);
+            deconsole.logbug("rawTransaction:" + rawTransaction);
             return rawTransaction;
         }
         catch(err)
