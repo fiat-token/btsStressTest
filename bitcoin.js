@@ -27,19 +27,42 @@ class Bitcoin
         let objUTXOs = JSON.parse(strUTXOs);
         if(nUTXOs != "all")
         {
-            objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
+            //objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
+            console.log("instanceof: " + objUTXOs instanceof Array);
+            console.log(JSON.stringify(objUTXOs));
         }
         const filteredUTXOs = map(objUTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout, "amount": utxo.amount} });
         return filteredUTXOs;
     }
 
-    async createRawTransaction(UTXO, destionationAddress)
+    async createRawTransaction(UTXOs, destionationAddress)
     {
         debug("creating raw transaction...");
-        //const amount = (UTXO.amount - this.fee).toFixed(8);
-        const amount = ( UTXO.amount - (this.fee / 100 * UTXO.amount) ).toFixed(8);
-        delete UTXO.amount;
-        const cmd = this.bcreg + " createrawtransaction '''[" + JSON.stringify(UTXO) + "]''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
+        //calculating senders
+        if(!UTXOs instanceof Array)
+        {
+            UTXOs = '[' + UTXO + ']';
+        }
+        const senders = JSON.stringify(UTXO);
+
+        //calculating amount
+        let totalAmount;
+        for(const utxo of UTXOs)
+        {
+            totalAmount += utxo.amount;
+        }
+        totalAmount /= UTXOs.length;
+        const amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
+
+        //calculating receivers
+        const obj = {};
+        for(const address of listAddress)
+        {
+            obj.address = amount;
+        }
+        const recipients = JSON.stringify(obj);
+
+        const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
         debug("cmd:" + cmd);
         const rawTransaction = await get(cmd);
         debug("rawTransaction:" + rawTransaction);
