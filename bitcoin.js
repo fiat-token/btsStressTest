@@ -53,11 +53,15 @@ class Bitcoin
 
         //calculating amount
         let totalAmount;
+        debug("UTXOs: ");
+        debug(UTXOs);
         for(const utxo of UTXOs)
         {
             totalAmount += utxo.amount;
+            debug("calc .. totalAmount: " + totalAmount);
         }
         totalAmount /= UTXOs.length;
+        debug("fin totalAmount: " + totalAmount);
         const amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
         debug("amount: " + amount);
 
