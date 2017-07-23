@@ -56,7 +56,7 @@ class Bitcoin
         //calculating amount
         let totalAmount;
         debug("UTXOs: ");
-        debug("|" + UTXOs + "|");
+        debug(JSON.stringify(UTXOs));
         for(const utxo of UTXOs)
         {
             debug("one elem:");
