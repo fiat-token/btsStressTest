@@ -1,7 +1,7 @@
 'use strict';
 
 const debug = require('debug')('btcStressTest:server');
-const { get } = require('libs');
+const { get } = require('./libs');
 
 class Bitcoin
 {
@@ -14,7 +14,7 @@ class Bitcoin
     async generateNewAddress()
     {
         debug("generating new address...");
-        const newAddress = await get(bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
+        const newAddress = await get(this.bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
         debug("newAddress:" + newAddress);
         return newAddress;
     }
@@ -22,7 +22,7 @@ class Bitcoin
     async getUTXOs(nUTXOs)
     {
         debug("get all UTXOs...");
-        const strUTXOs = await get(bcreg + " listunspent");
+        const strUTXOs = await get(this.bcreg + " listunspent");
         debug("UTXOs:" + strUTXOs);
         let objUTXOs = JSON.parse(strUTXOs);
         if(nUTXOs != "all")
@@ -36,9 +36,9 @@ class Bitcoin
     async createRawTransaction(UTXO, destionationAddress)
     {
         debug("creating raw transaction...");
-        const amount = (UTXO.amount - fee).toFixed(8);
+        const amount = (UTXO.amount - this.fee).toFixed(8);
         delete UTXO.amount;
-        const cmd = bcreg + " createrawtransaction '''[" + JSON.stringify(UTXO) + "]''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
+        const cmd = this.bcreg + " createrawtransaction '''[" + JSON.stringify(UTXO) + "]''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
         debug("cmd:" + cmd);
         const rawTransaction = await get(cmd);
         debug("rawTransaction:" + rawTransaction);
@@ -48,7 +48,7 @@ class Bitcoin
     async signTransaction(rawTransaction)
     {
         debug("signing raw transaction...");
-        const signedTransaction = await get(bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
+        const signedTransaction = await get(this.bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
         debug("signedTransaction:" + signedTransaction);
         return signedTransaction;
     }
@@ -56,7 +56,7 @@ class Bitcoin
     async sendTransaction(signedTransaction)
     {
         debug("sending raw transaction...");
-        const hashHexTransaction = await get(bcreg + " -named sendrawtransaction hexstring=" + JSON.parse(signedTransaction).hex);
+        const hashHexTransaction = await get(this.bcreg + " -named sendrawtransaction hexstring=" + JSON.parse(signedTransaction).hex);
         debug("hashHexTransaction:" + hashHexTransaction);
         return hashHexTransaction;
     }
@@ -64,8 +64,10 @@ class Bitcoin
     async generate()
     {
         console.log("generating new block...");
-        const hashBlock = await get(bcreg + " generate 1");
+        const hashBlock = await get(this.bcreg + " generate 1");
         console.log("hashBlock:" + hashBlock);
         return hashBlock;
     }
 }
+
+module.exports = Bitcoin;

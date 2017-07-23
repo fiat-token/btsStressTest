@@ -1,27 +1,27 @@
-'use strict';
+//'use strict';
 
 const debug = require('debug')('btcStressTest:server');
 const { promisify } = require('util');
 const { exec } = require('child_process');
-const { map, range } = require('libs');
-const Bitcoin = require('bitcoin');
+const { map, range } = require('./libs');
+const Bitcoin = require('./bitcoin');
 const execPromisified = promisify(exec);
 
 //default params
-let bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
-let fee = 0.001;
-let numberOfTransaction = process.argv[2] || 1;
+const bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
+const fee = 0.001;
+const numberOfTransactions = process.argv[2] || 1;
 
 
-const main = async (numberOfTransaction) =>
+const main = async (numberOfTransactions) =>
 {
     try
     {
-        console.log("calculating " + numberOfTransaction + " transactions...");
+        console.log("calculating " + numberOfTransactions + " transactions...");
         const btc = new Bitcoin(bcreg, fee);
         const listSignedTransaction = [];
-        const UTXOs = await btc.getUTXOs("all"); // change all with numberOfTransaction
-        for(const num in range(numberOfTransaction))
+        const UTXOs = await btc.getUTXOs("all"); // change all with numberOfTransactions
+        for(const num in range(numberOfTransactions))
         {
             if(num % 50 == 0) { console.log("\t" + num + "..."); }
 

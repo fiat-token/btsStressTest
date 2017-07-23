@@ -1,5 +1,6 @@
 'use strict';
 const { promisify } = require('util');
+const fs = require('fs');
 
 const map = (array, transform) =>
 {
@@ -61,10 +62,10 @@ const get = async (cmd) =>
 
 const log = (file, data) =>
 {
-    const writePromisified = promisify(fs.writeFile());
+    //const pippo = promisify(fs.writeFile);
     try
     {
-        await writePromisified(data, file);
+        const boh = await fs.writeFile(file, data);
     }
     catch(err)
     {
