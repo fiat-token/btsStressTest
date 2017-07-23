@@ -1,6 +1,8 @@
 'use strict';
+
 const { promisify } = require('util');
 const { appendFile } = require('fs');
+const { exec } = require('child_process');
 const execPromisified = promisify(exec);
 
 const map = (array, transform) =>
