@@ -48,7 +48,7 @@ class Bitcoin
         {
             debug("UTXOs isn't an array:" + UTXOs);
             UTXOs = '[' + UTXOs + ']';
-            debug("now yes:" + UTXOs);
+            debug(UTXOs);
         }
         const senders = JSON.stringify(UTXOs);
         debug("senders: " + senders);
@@ -59,9 +59,10 @@ class Bitcoin
         debug("|" + UTXOs + "|");
         for(const utxo of UTXOs)
         {
-            debug("one elem:" + utxo);
+            debug("one elem:");
+            debug(utxo);
             totalAmount += utxo.amount;
-            debug("calc .. totalAmount: " + totalAmount);
+            debug(totalAmount);
         }
         totalAmount /= UTXOs.length;
         debug("fin totalAmount: " + totalAmount);
