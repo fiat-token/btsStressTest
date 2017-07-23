@@ -57,6 +57,7 @@ class Bitcoin
         debug(UTXOs);
         for(const utxo of UTXOs)
         {
+            debug("one elem:" + utxo);
             totalAmount += utxo.amount;
             debug("calc .. totalAmount: " + totalAmount);
         }
