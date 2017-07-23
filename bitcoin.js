@@ -1,7 +1,7 @@
 'use strict';
 
 const debug = require('debug')('btcStressTest:server');
-const { get, map } = require('./libs');
+const { get, map, range } = require('./libs');
 
 class Bitcoin
 {
@@ -11,12 +11,17 @@ class Bitcoin
         this.fee = fee;
     }
 
-    async generateNewAddress()
+    async generateNewAddress(quantity)
     {
         debug("generating new address...");
-        const newAddress = await get(this.bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
-        debug("newAddress:" + newAddress);
-        return newAddress;
+        const listAddress = [];
+        for(const i of range(quantity))
+        {
+            const newAddress = await get(this.bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
+            listAddress.push(newAddress);
+            debug("newAddress:" + newAddress);
+        }
+        return listAddress;
     }
 
     async getUTXOs(nUTXOs)
@@ -28,14 +33,14 @@ class Bitcoin
         if(nUTXOs != "all")
         {
             //objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
-            console.log("instanceof: " + objUTXOs instanceof Array);
-            console.log(JSON.stringify(objUTXOs));
+            console.log("instanceof: " + (objUTXOs instanceof Array));
+            console.log(objUTXOs);
         }
         const filteredUTXOs = map(objUTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout, "amount": utxo.amount} });
         return filteredUTXOs;
     }
 
-    async createRawTransaction(UTXOs, destionationAddress)
+    async createRawTransaction(UTXOs, listAddresses)
     {
         debug("creating raw transaction...");
         //calculating senders
@@ -44,6 +49,7 @@ class Bitcoin
             UTXOs = '[' + UTXOs + ']';
         }
         const senders = JSON.stringify(UTXOs);
+        debug("senders: " + senders);
 
         //calculating amount
         let totalAmount;
@@ -53,14 +59,16 @@ class Bitcoin
         }
         totalAmount /= UTXOs.length;
         const amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
+        debug("amount: " + amount);
 
         //calculating receivers
         const obj = {};
-        for(const address of listAddress)
+        for(const address of listAddresses)
         {
             obj.address = amount;
         }
         const recipients = JSON.stringify(obj);
+        debug("recipients: " + recipients);
 
         const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
         debug("cmd:" + cmd);

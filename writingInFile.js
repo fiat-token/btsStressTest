@@ -8,19 +8,19 @@ const { log } = require('./libs');
 //default params
 const bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
 const fee = 0.1; // it's a percentage!!
-const numberOfTransactions = process.argv[2] || 1;
+const quantity = process.argv[2] || 1;
 const file = "listOfhashHexTransaction.txt";
 
 //creating new object
 const btc = new Bitcoin(bcreg, fee);
 
 //main
-const main = async () =>
+const main = async (quantity) =>
 {
     try
     {
         //creating an address destination
-        const destionationAddress = await btc.generateNewAddress();
+        const destionationAddress = await btc.generateNewAddress(quantity);
 
         const utxos = await btc.getUTXOs("all");
         for(const utxo of utxos)
@@ -36,7 +36,7 @@ const main = async () =>
 }
 
 //execution
-main();
+main(quantity);
 
 //FINAL
 //const hashBlock = await btc.generate();
