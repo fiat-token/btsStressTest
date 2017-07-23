@@ -3,7 +3,9 @@
 const { promisify } = require('util');
 const { appendFile } = require('fs');
 const { exec } = require('child_process');
+
 const execPromisified = promisify(exec);
+const appendPromisified = promisify(appendFile);
 
 const map = (array, transform) =>
 {
@@ -65,14 +67,13 @@ const get = async (cmd) =>
 
 const log = async (file, data) =>
 {
-    const appendPromisified = promisify(appendFile);
     try
     {
        await appendPromisified(file, data);
     }
     catch(err)
     {
-        console.log(err);
+        console.log("Error from log:" + err);
     }
 }
 

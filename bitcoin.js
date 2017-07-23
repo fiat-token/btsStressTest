@@ -13,27 +13,41 @@ class Bitcoin
 
     async generateNewAddress(quantity)
     {
-        debug("generating " + quantity + " new addresses...");
-        const listAddress = [];
-        for(const i of range(quantity))
+        try
         {
-            const newAddress = await get(this.bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
-            listAddress.push(newAddress);
+            debug("generating " + quantity + " new addresses...");
+            const listAddress = [];
+            for(const i of range(quantity))
+            {
+                const newAddress = await get(this.bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
+                listAddress.push(newAddress);
+            }
+            return listAddress;
         }
-        return listAddress;
+        catch(err)
+        {
+            console.log("Error from generateNewAddress: " + err);
+        }
     }
 
     async getUTXOs(nUTXOs)
     {
-        debug("get all UTXOs...");
-        const strUTXOs = await get(this.bcreg + " listunspent");
-        let objUTXOs = JSON.parse(strUTXOs);
-        if(nUTXOs != "all")
+        try
         {
-            //objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
+            debug("get all UTXOs...");
+            const strUTXOs = await get(this.bcreg + " listunspent");
+            let objUTXOs = JSON.parse(strUTXOs);
+            if(nUTXOs != "all")
+            {
+                //objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
+            }
+            const filteredUTXOs = map(objUTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout, "amount": utxo.amount} });
+            return filteredUTXOs;
         }
-        const filteredUTXOs = map(objUTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout, "amount": utxo.amount} });
-        return filteredUTXOs;
+        catch(err)
+        {
+            console.log("Error from getUTXOs: " + err);
+        }
     }
 
     async createRawTransaction(UTXOs, listAddresses)
@@ -43,11 +57,14 @@ class Bitcoin
             console.log("creating raw transaction...");
 
             //calculating senders
+            let senders;
             if(!(UTXOs instanceof Array))
             {
                 UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
+                senders = UTXOs;
+                delete senders.amount;
             }
-            const senders = JSON.stringify(UTXOs);
+            senders = JSON.stringify(senders);
             debug("senders: " + senders);
 
             //calculating amount
@@ -64,19 +81,14 @@ class Bitcoin
             const obj = {};
             for(const address of listAddresses)
             {
-                console.log("one address:");
-                console.log(address);
                 obj[address] = amount;
             }
-            console.log("final obj:");
-            console.log(obj);
             const recipients = JSON.stringify(obj);
-            console.log("recipients: " + recipients);
+            debug("recipients: " + recipients);
 
             const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
             console.log("cmd:" + cmd);
             const rawTransaction = await get(cmd);
-            console.log("rawTransaction:" + rawTransaction);
             return rawTransaction;
         }
         catch(err)
@@ -87,26 +99,47 @@ class Bitcoin
 
     async signTransaction(rawTransaction)
     {
-        debug("signing raw transaction...");
-        const signedTransaction = await get(this.bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
-        debug("signedTransaction:" + signedTransaction);
-        return signedTransaction;
+        try
+        {
+            debug("signing raw transaction...");
+            const signedTransaction = await get(this.bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
+            debug("signedTransaction:" + signedTransaction);
+            return signedTransaction;
+        }
+        catch(err)
+        {
+            console.log("Error from signTransaction: " + err);
+        }
     }
 
     async sendTransaction(signedTransaction)
     {
-        debug("sending raw transaction...");
-        const hashHexTransaction = await get(this.bcreg + " -named sendrawtransaction hexstring=" + JSON.parse(signedTransaction).hex);
-        debug("hashHexTransaction:" + hashHexTransaction);
-        return hashHexTransaction;
+        try
+        {
+            debug("sending raw transaction...");
+            const hashHexTransaction = await get(this.bcreg + " -named sendrawtransaction hexstring=" + JSON.parse(signedTransaction).hex);
+            debug("hashHexTransaction:" + hashHexTransaction);
+            return hashHexTransaction;
+        }
+        catch(err)
+        {
+            console.log("Error from sendTransaction: " + err);
+        }
     }
 
     async generate()
     {
-        console.log("generating new block...");
-        const hashBlock = await get(this.bcreg + " generate 1");
-        console.log("hashBlock:" + hashBlock);
-        return hashBlock;
+        try
+        {
+            console.log("generating new block...");
+            const hashBlock = await get(this.bcreg + " generate 1");
+            console.log("hashBlock:" + hashBlock);
+            return hashBlock;
+        }
+        catch(err)
+        {
+            console.log("Error from generate: " + err);
+        }
     }
 }
 
