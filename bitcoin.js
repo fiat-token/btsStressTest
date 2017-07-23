@@ -36,7 +36,8 @@ class Bitcoin
     async createRawTransaction(UTXO, destionationAddress)
     {
         debug("creating raw transaction...");
-        const amount = (UTXO.amount - this.fee).toFixed(8);
+        //const amount = (UTXO.amount - this.fee).toFixed(8);
+        const amount = (this.fee / 100 * UTXO.amount).toFixed(8);
         delete UTXO.amount;
         const cmd = this.bcreg + " createrawtransaction '''[" + JSON.stringify(UTXO) + "]''' '''{" + '"' + destionationAddress + '": ' +  amount + "}'''";
         debug("cmd:" + cmd);

@@ -59,7 +59,7 @@ const get = async (cmd) =>
     }
     catch(err)
     {
-        throw Error(err);
+        console.log("error from get: " + err);
     }
 }
 
@@ -72,7 +72,7 @@ const log = async (file, data) =>
     }
     catch(err)
     {
-        console.error(err);
+        console.log(err);
     }
 }
 
