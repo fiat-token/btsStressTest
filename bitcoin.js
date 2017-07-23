@@ -44,7 +44,7 @@ class Bitcoin
     {
         debug("creating raw transaction...");
         //calculating senders
-        if(!UTXOs instanceof Array)
+        if(! UTXOs instanceof Array)
         {
             debug("UTXOs isn't an array:" + UTXOs);
             UTXOs = '[' + UTXOs + ']';
