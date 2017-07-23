@@ -59,7 +59,7 @@ const get = async (cmd) =>
     }
     catch(err)
     {
-        console.log("error from get: " + err);
+        console.log("Error from get: " + err);
     }
 }
 
