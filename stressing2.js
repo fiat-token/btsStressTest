@@ -1,6 +1,6 @@
 //'use strict';
 
-const debug = require('debug')('btcStressTest:server');
+const debug = require('debug')('stress2');
 const { promisify } = require('util');
 const { exec } = require('child_process');
 const { map, range } = require('./libs');

@@ -1,7 +1,7 @@
 'use strict';
 
 //libs
-const debug = require('debug')('btcStressTest:server');
+const debug = require('debug')('stress1');
 const Bitcoin = require('./bitcoin');
 const { log } = require('./libs');
 

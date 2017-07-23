@@ -2,7 +2,7 @@
 
 const debug = require('debug')('btcStressTest:server');
 const { get, map, range, log } = require('./libs');
-const file = "logForGetUTXOs.log";
+const file = "log.log";
 
 class Bitcoin
 {
@@ -38,7 +38,6 @@ class Bitcoin
             debug("get all UTXOs...");
             const strUTXOs = await get(this.bcreg + " listunspent");
             let objUTXOs = JSON.parse(strUTXOs);
-            log(file, JSON.stringify(objUTXOs));
             if(nUTXOs != "all")
             {
                 //objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
@@ -64,7 +63,7 @@ class Bitcoin
             {
                 UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
                 senders = UTXOs;
-                delete senders.amount;
+                delete senders[amount];
             }
             senders = JSON.stringify(senders);
             debug("senders: " + senders);
