@@ -42,32 +42,33 @@ class Bitcoin
 
     async createRawTransaction(UTXOs, listAddresses)
     {
-        debug("creating raw transaction...");
+        console.log("creating raw transaction...");
         //calculating senders
+        console.log(typeof UTXOs);
         if(!(UTXOs instanceof Array))
         {
-            debug("UTXOs isn't an array:" + UTXOs);
-            UTXOs = '[' + UTXOs + ']';
-            debug(UTXOs);
+            console.log("UTXOs isn't an array:" + UTXOs);
+            UTXOs = '[' + JSON.stringify(UTXOs) + ']';
+            console.log(UTXOs);
         }
         const senders = JSON.stringify(UTXOs);
-        debug("senders: " + senders);
+        deconsole.logbug("senders: " + senders);
 
         //calculating amount
         let totalAmount;
-        debug("UTXOs: ");
-        debug(JSON.stringify(UTXOs));
+        console.log("UTXOs: ");
+        console.log(JSON.stringify(UTXOs));
         for(const utxo of UTXOs)
         {
-            debug("one elem:");
-            debug(utxo);
+            console.log("one elem:");
+            console.log(utxo);
             totalAmount += utxo.amount;
-            debug(totalAmount);
+            console.log(totalAmount);
         }
         totalAmount /= UTXOs.length;
-        debug("fin totalAmount: " + totalAmount);
+        console.log("fin totalAmount: " + totalAmount);
         const amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
-        debug("amount: " + amount);
+        console.log("amount: " + amount);
 
         //calculating receivers
         const obj = {};
