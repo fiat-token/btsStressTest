@@ -44,7 +44,7 @@ class Bitcoin
     {
         debug("creating raw transaction...");
         //calculating senders
-        if(! UTXOs instanceof Array)
+        if(!(UTXOs instanceof Array))
         {
             debug("UTXOs isn't an array:" + UTXOs);
             UTXOs = '[' + UTXOs + ']';
@@ -56,7 +56,7 @@ class Bitcoin
         //calculating amount
         let totalAmount;
         debug("UTXOs: ");
-        debug(UTXOs);
+        debug("|" + UTXOs + "|");
         for(const utxo of UTXOs)
         {
             debug("one elem:" + utxo);
