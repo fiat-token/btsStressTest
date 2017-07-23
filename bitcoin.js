@@ -13,14 +13,15 @@ class Bitcoin
 
     async generateNewAddress(quantity)
     {
-        debug("generating new address...");
+        console.log("generating " + quantity + " new addresses...");
         const listAddress = [];
         for(const i of range(quantity))
         {
             const newAddress = await get(this.bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
             listAddress.push(newAddress);
-            debug("newAddress:" + newAddress);
+            console.log("newAddress:" + newAddress);
         }
+        console.log("final array addresses:" + JSON.stringify(listAddress));
         return listAddress;
     }
 
@@ -50,31 +51,24 @@ class Bitcoin
             if(!(UTXOs instanceof Array))
             {
                 UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
-                console.log(UTXOs);
-                console.log("adesso:");
-                console.log(UTXOs instanceof Array);
             }
             const senders = JSON.stringify(UTXOs);
-            console.log("senders: " + senders);
+            debug("senders: " + senders);
 
             //calculating amount
             let totalAmount = 0;
             for(const utxo of UTXOs)
             {
-                console.log("un utxo:");
-                console.log(utxo);
                 totalAmount += utxo.amount;
-                console.log("partial totalAmount: " + totalAmount);
             }
             totalAmount /= UTXOs.length;
-            console.log("fine totalAmount: " + totalAmount);
             const amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
-            console.log("amount: " + amount);
+            debug("amount: " + amount);
 
             //calculating receivers
             const obj = {};
-            console.log("type of listAddresses:");
-            console.log(typeof listAddresses);
+            console.log("listAddresses:");
+            console.log(listAddresses);
             for(const address of listAddresses)
             {
                 console.log("one address:");

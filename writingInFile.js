@@ -20,12 +20,12 @@ const main = async (quantity) =>
     try
     {
         //creating an address destination
-        const destionationAddress = await btc.generateNewAddress(quantity);
+        const destinationAddresses = await btc.generateNewAddress(quantity);
 
         const utxos = await btc.getUTXOs("all");
         for(const utxo of utxos)
         {
-            const hashHexTransaction = await cssTx(destionationAddress, utxo);
+            const hashHexTransaction = await cssTx(destinationAddresses, utxo);
             //log(file, hashHexTransaction);
         }
     }
@@ -44,9 +44,9 @@ main(quantity);
 //functions
 
 //create-sign-send transaction
-const cssTx = async (destionationAddress, utxo) =>
+const cssTx = async (destinationAddresses, utxo) =>
 {
-    const rawTransaction = await btc.createRawTransaction(utxo, destionationAddress);
+    const rawTransaction = await btc.createRawTransaction(utxo, destinationAddresses);
     const signedTransaction = await btc.signTransaction(rawTransaction);
     const hashHexTransaction = await btc.sendTransaction(signedTransaction);
     return hashHexTransaction;
