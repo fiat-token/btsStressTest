@@ -45,30 +45,30 @@ class Bitcoin
         try
         {
             console.log("creating raw transaction...");
+
             //calculating senders
-            console.log(typeof UTXOs);
             if(!(UTXOs instanceof Array))
             {
-                console.log("UTXOs isn't an array:" + UTXOs);
-                UTXOs = '[' + JSON.stringify(UTXOs) + ']';
+                //console.log("UTXOs isn't an array:" + UTXOs);
+                UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
                 console.log(UTXOs);
+                console.log("adesso:");
+                //console.log(typeof UTXOs);
             }
             const senders = JSON.stringify(UTXOs);
             console.log("senders: " + senders);
 
             //calculating amount
-            let totalAmount;
-            console.log("UTXOs: ");
-            console.log(JSON.stringify(UTXOs));
+            let totalAmount = 0;
             for(const utxo of UTXOs)
             {
-                console.log("one elem:");
+                console.log("un utxo:");
                 console.log(utxo);
                 totalAmount += utxo.amount;
-                console.log(totalAmount);
+                console.log("partial totalAmount: " + totalAmount);
             }
             totalAmount /= UTXOs.length;
-            console.log("fin totalAmount: " + totalAmount);
+            console.log("fine totalAmount: " + totalAmount);
             const amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
             console.log("amount: " + amount);
 
