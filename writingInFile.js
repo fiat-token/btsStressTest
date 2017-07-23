@@ -11,14 +11,14 @@ const fee = 0.001;
 const numberOfTransactions = process.argv[2] || 1;
 const file = "listOfhashHexTransaction.txt";
 
+//creating new object
+const btc = new Bitcoin(bcreg, fee);
+
 //main
 const main = async () =>
 {
     try
     {
-        //creating new object
-        const btc = new Bitcoin(bcreg, fee);
-
         //creating an address destination
         const destionationAddress = await btc.generateNewAddress();
 
