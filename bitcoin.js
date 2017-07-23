@@ -41,9 +41,9 @@ class Bitcoin
         //calculating senders
         if(!UTXOs instanceof Array)
         {
-            UTXOs = '[' + UTXO + ']';
+            UTXOs = '[' + UTXOs + ']';
         }
-        const senders = JSON.stringify(UTXO);
+        const senders = JSON.stringify(UTXOs);
 
         //calculating amount
         let totalAmount;
