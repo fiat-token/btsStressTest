@@ -46,7 +46,9 @@ class Bitcoin
         //calculating senders
         if(!UTXOs instanceof Array)
         {
+            debug("UTXOs isn't an array:" + UTXOs);
             UTXOs = '[' + UTXOs + ']';
+            debug("now yes:" + UTXOs);
         }
         const senders = JSON.stringify(UTXOs);
         debug("senders: " + senders);
