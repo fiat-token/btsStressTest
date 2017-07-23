@@ -13,15 +13,13 @@ class Bitcoin
 
     async generateNewAddress(quantity)
     {
-        console.log("generating " + quantity + " new addresses...");
+        debug("generating " + quantity + " new addresses...");
         const listAddress = [];
         for(const i of range(quantity))
         {
             const newAddress = await get(this.bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
             listAddress.push(newAddress);
-            console.log("newAddress:" + newAddress);
         }
-        console.log("final array addresses:" + JSON.stringify(listAddress));
         return listAddress;
     }
 
@@ -29,13 +27,10 @@ class Bitcoin
     {
         debug("get all UTXOs...");
         const strUTXOs = await get(this.bcreg + " listunspent");
-        debug("UTXOs:" + strUTXOs);
         let objUTXOs = JSON.parse(strUTXOs);
         if(nUTXOs != "all")
         {
             //objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
-            console.log("instanceof: " + (objUTXOs instanceof Array));
-            console.log(objUTXOs);
         }
         const filteredUTXOs = map(objUTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout, "amount": utxo.amount} });
         return filteredUTXOs;
@@ -67,13 +62,11 @@ class Bitcoin
 
             //calculating receivers
             const obj = {};
-            console.log("listAddresses:");
-            console.log(listAddresses);
             for(const address of listAddresses)
             {
                 console.log("one address:");
                 console.log(address);
-                obj.address = amount;
+                obj[address] = amount;
             }
             console.log("final obj:");
             console.log(obj);
