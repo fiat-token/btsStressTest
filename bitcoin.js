@@ -78,7 +78,10 @@ class Bitcoin
                 debug(utxo);
                 totalAmount += utxo.amount;
             }
+            debug("totalAmount pre div: " + totalAmount);
             totalAmount /= UTXOs.length;
+            debug("totalAmount aft div: " + totalAmount);
+            debug("fee: " + this.fee);
             const amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
             debug("amount: " + amount);
 
