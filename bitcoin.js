@@ -69,6 +69,7 @@ class Bitcoin
                 debug("quo");
                 senders = UTXOs;
                 debug("qua");
+                debug(senders);
                 delete senders[amount];
                 debug("là");
             }
