@@ -59,18 +59,11 @@ class Bitcoin
 
             //calculating senders
             let senders;
-            debug("UTXOs");
-            debug(UTXOs);
-            console.error("dai cazzo");
             if(!(UTXOs instanceof Array))
             {
                 UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
-                debug("quo");
                 senders = map(UTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout} });
-                debug(senders)
-                debug("là");
             }
-            debug("dlam");
             senders = JSON.stringify(senders);
             debug("senders: " + senders);
 
@@ -96,6 +89,7 @@ class Bitcoin
             const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
             debug("cmd-rawTx:" + cmd);
             const rawTransaction = await get(cmd);
+            debug("rawTransaction:" + cmd);
             return rawTransaction;
         }
         catch(err)
