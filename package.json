@@ -11,7 +11,7 @@
     "perldev": "run-s pull perl",
     "node": "node stressing.js",
     "nodedev": "run-s pull node",
-    "debug": "DEBUG=stress devnode",
+    "debug": "DEBUG=stress nodedev",
     "startProd": "pm2 start stressing.js --name stressing -i 0",
     "stopProd": "pm2 stop stressing",
     "list": "pm2 list",
