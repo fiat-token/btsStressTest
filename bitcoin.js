@@ -64,14 +64,10 @@ class Bitcoin
             console.error("dai cazzo");
             if(!(UTXOs instanceof Array))
             {
-                debug("qui");
                 UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
                 debug("quo");
-                senders = UTXOs;
-                debug("qua");
-                debug(senders);
-                delete senders.amount;
-                debug(senders);
+                senders = map(UTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout} });
+                debug(senders)
                 debug("là");
             }
             debug("dlam");
