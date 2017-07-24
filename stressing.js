@@ -57,6 +57,7 @@ const cssTx = async (utxo, destinationAddresses) =>
 {
     try
     {
+        debug("inside-cssTx");
         const rawTransaction = await btc.createRawTransaction(utxo, destinationAddresses);
         const signedTransaction = await btc.signTransaction(rawTransaction);
         const hashHexTransaction = await btc.sendTransaction(signedTransaction);
