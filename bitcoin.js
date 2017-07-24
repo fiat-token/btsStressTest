@@ -77,7 +77,7 @@ class Bitcoin
             debug("totalAmount: " + totalAmount);
             let amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
             debug("prediv amount: " + amount);
-            amount = amount /= listAddresses.length;
+            amount /= listAddresses.length;
             debug("listAddressesLength: " + listAddresses.length);
             debug("fee: " + this.fee);
             debug("amount: " + amount);
