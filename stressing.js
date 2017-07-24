@@ -32,6 +32,8 @@ const main = async (quantity) =>
         const utxos = await btc.getUTXOs("all");
         for(const utxo of utxos)
         {
+            debug("preutxo:");
+            debug(utxo);
             const hashHexTransaction = await cssTx(utxo, destinationAddresses);
             //log(logFile, hashHexTransaction);
         }

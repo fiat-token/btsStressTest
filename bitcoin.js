@@ -59,6 +59,8 @@ class Bitcoin
 
             //calculating senders
             let senders;
+            debug("UTXOs");
+            debug(UTXOs);
             if(!(UTXOs instanceof Array))
             {
                 UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
