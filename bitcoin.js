@@ -76,6 +76,8 @@ class Bitcoin
             }
             let amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
             amount = totalAmount /= listAddresses.length;
+            debug("listAddressesLength: " + listAddresses.length);
+            debug("fee: " + this.fee);
             debug("amount: " + amount);
 
             //calculating receivers
