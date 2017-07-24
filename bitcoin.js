@@ -81,7 +81,7 @@ class Bitcoin
             amount = (amount).toFixed(8);
             if (amount == 0)
             {
-                amount = 0,00000001;
+                amount = 0.00000001;
             }
             debug("listAddressesLength: " + listAddresses.length);
             debug("fee: " + this.fee);
