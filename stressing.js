@@ -48,7 +48,7 @@ const main = async (quantity) =>
 main(quantity);
 
 //FINAL
-//const hashBlock = await btc.generate();
+const hashBlock = await btc.generate();
 
 //functions
 
