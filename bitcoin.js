@@ -6,7 +6,7 @@ const file = "log.log";
 
 class Bitcoin
 {
-    constructor (bcreg, fee) 
+    constructor(bcreg, fee) 
     {
         this.bcreg = bcreg;
         this.fee = fee;
@@ -55,7 +55,7 @@ class Bitcoin
     {
         try
         {
-            console.log("creating raw transaction...");
+            debug("creating raw transaction...");
 
             //calculating senders
             let senders;
@@ -88,7 +88,7 @@ class Bitcoin
             debug("recipients: " + recipients);
 
             const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
-            console.log("cmd:" + cmd);
+            debug("cmd-rawTx:" + cmd);
             const rawTransaction = await get(cmd);
             return rawTransaction;
         }

@@ -12,6 +12,12 @@ const fee = process.env.fee ||  0.1; // it's a percentage!!
 const quantity = process.env.quantity || 1;
 const logFile = process.env.logFile || "listOfhashHexTransaction.log";
 
+debug("parameters:");
+debug("bcreg: " + bcreg);
+debug("fee: " + fee);
+debug("quantity: " + quantity);
+debug("logFile: " + logFile);
+
 //creating new object
 const btc = new Bitcoin(bcreg, fee);
 
@@ -26,7 +32,7 @@ const main = async (quantity) =>
         const utxos = await btc.getUTXOs("all");
         for(const utxo of utxos)
         {
-            const hashHexTransaction = await cssTx(destinationAddresses, utxo);
+            const hashHexTransaction = await cssTx(utxo, destinationAddresses);
             //log(logFile, hashHexTransaction);
         }
     }
@@ -45,10 +51,17 @@ main(quantity);
 //functions
 
 //create-sign-send transaction
-const cssTx = async (destinationAddresses, utxo) =>
+const cssTx = async (utxo, destinationAddresses) =>
 {
-    const rawTransaction = await btc.createRawTransaction(utxo, destinationAddresses);
-    const signedTransaction = await btc.signTransaction(rawTransaction);
-    const hashHexTransaction = await btc.sendTransaction(signedTransaction);
-    return hashHexTransaction;
+    try
+    {
+        const rawTransaction = await btc.createRawTransaction(utxo, destinationAddresses);
+        const signedTransaction = await btc.signTransaction(rawTransaction);
+        const hashHexTransaction = await btc.sendTransaction(signedTransaction);
+        return hashHexTransaction;
+    }
+    catch(err)
+    {
+        console.log("Error from cssTx: " + err);
+    }
 }
