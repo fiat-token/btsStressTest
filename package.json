@@ -4,20 +4,13 @@
   "private": true,
   "description": "nodejs script for stressing the bitcoin core with multiple transactions",
   "scripts": {
-    //git
     "pull": "git pull",
     "push": "git push",
-
-    //perl
     "perl": "perl btcStressTest.pl",
     "perldev": "run-s pull perl",
-
-    //node
     "node": "node stressing.js",
     "nodedev": "run-s pull node",
     "debug": "DEBUG=stress2 devnode",
-    
-    //pm2
     "startProd": "pm2 start stressing1.js --name stressing1 -i 0",
     "stopProd": "pm2 stop stressing1",
     "list": "pm2 list",
@@ -25,6 +18,7 @@
   },
   "dependencies": {
     "debug": "^2.6.8",
+    "dotenv": "^4.0.0",
     "npm-run-all": "^4.0.2",
     "pm2": "^2.6.1"
   },

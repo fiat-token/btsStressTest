@@ -6,11 +6,10 @@ const Bitcoin = require('./bitcoin');
 const { log } = require('./libs');
 
 //default params
-const bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
-const fee = 0.1; // it's a percentage!!
-//const quantity = process.argv[2] || 1;
-const quantity = 1;
-const file = "listOfhashHexTransaction.log";
+const bcreg = process.env.bcreg || "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
+const fee = process.env.fee ||  0.1; // it's a percentage!!
+const quantity = process.env.quantity || 1;
+const logFile = process.env.logFile || "listOfhashHexTransaction.log";
 
 //creating new object
 const btc = new Bitcoin(bcreg, fee);
@@ -27,7 +26,7 @@ const main = async (quantity) =>
         for(const utxo of utxos)
         {
             const hashHexTransaction = await cssTx(destinationAddresses, utxo);
-            //log(file, hashHexTransaction);
+            //log(logFile, hashHexTransaction);
         }
     }
     catch(err)
