@@ -59,7 +59,7 @@ main(numberOfTransactions);
 
 const unitTestExample = async () =>
 {
-    const destionationAddress = await btc.generateNewAddress();
+    const destionationAddress = await btc.generateNewAddress(1);
     const utxo = await btc.getUTXOs(1);
     const rawTransaction = await btc.createRawTransaction(utxo, destionationAddress);
     const signedTransaction = await btc.signTransaction(rawTransaction);
