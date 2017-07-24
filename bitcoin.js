@@ -62,8 +62,9 @@ class Bitcoin
             if(!(UTXOs instanceof Array))
             {
                 UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
-                senders = map(UTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout} });
             }
+            
+            senders = map(UTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout} });
             senders = JSON.stringify(senders);
             debug("senders: " + senders);
 
