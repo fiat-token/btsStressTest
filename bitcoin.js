@@ -79,6 +79,10 @@ class Bitcoin
             debug("prediv amount: " + amount);
             amount /= listAddresses.length;
             amount = (amount).toFixed(8);
+            if (amount == 0)
+            {
+                amount = 0,00000001;
+            }
             debug("listAddressesLength: " + listAddresses.length);
             debug("fee: " + this.fee);
             debug("amount: " + amount);
