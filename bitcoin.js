@@ -53,14 +53,19 @@ class Bitcoin
 
     async createRawTransaction(UTXOs, listAddresses)
     {
+        debug("impossibile");
+
         try
         {
+            console.error("porcanna STDERR");
+            console.log("porcanna STDOUT");
             debug("creating raw transaction...");
 
             //calculating senders
             let senders;
             debug("UTXOs");
             debug(UTXOs);
+            console.error("dai cazzo");
             if(!(UTXOs instanceof Array))
             {
                 UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
