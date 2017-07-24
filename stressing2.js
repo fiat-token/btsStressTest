@@ -1,73 +1,54 @@
-//'use strict';
+'use strict';
 
-require('dotenv').load();
-const debug = require('debug')('stress2');
-const { promisify } = require('util');
-const { exec } = require('child_process');
-const { map, range } = require('./libs');
+//libs
+const debug = require('debug')('stress1');
 const Bitcoin = require('./bitcoin');
-const execPromisified = promisify(exec);
+const { log } = require('./libs');
 
 //default params
-const bcreg = "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
-const fee = 0.001;
-const numberOfTransactions = process.argv[2] || 1;
+require('dotenv').load();
+const bcreg = process.env.bcreg || "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
+const fee = process.env.fee ||  0.1; // it's a percentage!!
+const quantity = process.env.quantity || 1;
+const logFile = process.env.logFile || "listOfhashHexTransaction.log";
 
+//creating new object
+const btc = new Bitcoin(bcreg, fee);
 
-const main = async (numberOfTransactions) =>
+//main
+const main = async (quantity) =>
 {
     try
     {
-        console.log("calculating " + numberOfTransactions + " transactions...");
-        const btc = new Bitcoin(bcreg, fee);
-        const listSignedTransaction = [];
-        const UTXOs = await btc.getUTXOs("all"); // change all with numberOfTransactions
-        for(const num in range(numberOfTransactions))
+        //creating an address destination
+        const destinationAddresses = await btc.generateNewAddress(quantity);
+
+        const utxos = await btc.getUTXOs("all");
+        for(const utxo of utxos)
         {
-            if(num % 50 == 0) { console.log("\t" + num + "..."); }
-
-            const destionationAddress = await btc.generateNewAddress();
-            const UTXO = UTXOs[num];
-            const rawTransaction = await btc.createRawTransaction(UTXO, destionationAddress);
-            const signedTransaction = await btc.signTransaction(rawTransaction);
-            listSignedTransaction.push(signedTransaction);
+            const hashHexTransaction = await cssTx(destinationAddresses, utxo);
+            //log(logFile, hashHexTransaction);
         }
-
-        console.log("sending transactions..");
-       
-        for(const signed in listSignedTransaction)
-        {
-            if(signed % 50 == 0) { console.log("\t" + signed + "..."); }
-
-            btc.sendTransaction(listSignedTransaction[signed]);
-        }
-        
-        const begin = Date.now();
-        const hashBlock = await btc.generate();
-        const end =  Date.now();
-        console.log("time elapsed in s: " + (end - begin)/1000) ;
     }
     catch(err)
     {
-        throw Error(err);
+        console.log("Error from main: " + err);
     }
 }
 
-main(numberOfTransactions);
+//execution
+main(quantity);
 
+//FINAL
+//const hashBlock = await btc.generate();
 
+//functions
 
-const unitTestExample = async () =>
+//create-sign-send transaction
+const cssTx = async (destinationAddresses, utxo) =>
 {
-    const destionationAddress = await btc.generateNewAddress();
-    const utxo = await btc.getUTXOs(1);
-    const rawTransaction = await btc.createRawTransaction(utxo, destionationAddress);
+    const rawTransaction = await btc.createRawTransaction(utxo, destinationAddresses);
     const signedTransaction = await btc.signTransaction(rawTransaction);
-
     const hashHexTransaction = await btc.sendTransaction(signedTransaction);
-    const hashBlock = await btc.generate();
-
-    //TODO quando fai sign, controlla che il l'oggetto tornato abbia il campo complete a true
+    return hashHexTransaction;
 }
-
-//unitTestExample();

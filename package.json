@@ -8,7 +8,7 @@
     "push": "git push",
     "perl": "perl btcStressTest.pl",
     "perldev": "run-s pull perl",
-    "node": "node stressing.js",
+    "node": "node stressing2.js",
     "nodedev": "run-s pull node",
     "debug": "DEBUG=stress2 devnode",
     "startProd": "pm2 start stressing1.js --name stressing1 -i 0",
