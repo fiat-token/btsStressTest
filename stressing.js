@@ -39,7 +39,7 @@ const main = async (quantity) =>
         }
 
         //FINAL
-        const hashBlock = await btc.generate();
+        //const hashBlock = await btc.generate();
     }
     catch(err)
     {
