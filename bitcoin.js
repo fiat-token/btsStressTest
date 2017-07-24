@@ -72,8 +72,6 @@ class Bitcoin
             let totalAmount = 0;
             for(const utxo of UTXOs)
             {
-                debug("one utxo:");
-                debug(utxo);
                 totalAmount += utxo.amount;
             }
             let amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
@@ -92,7 +90,7 @@ class Bitcoin
             const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
             debug("cmd-rawTx:" + cmd);
             const rawTransaction = await get(cmd);
-            debug("rawTransaction:" + cmd);
+            debug("rawTransaction:" + rawTransaction);
             return rawTransaction;
         }
         catch(err)
