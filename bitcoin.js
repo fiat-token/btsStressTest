@@ -70,19 +70,14 @@ class Bitcoin
 
             //calculating amount
             let totalAmount = 0;
-            debug("UTXO pre for: ");
-            debug(UTXOs);
             for(const utxo of UTXOs)
             {
                 debug("one utxo:");
                 debug(utxo);
                 totalAmount += utxo.amount;
             }
-            debug("totalAmount pre div: " + totalAmount);
-            totalAmount /= UTXOs.length;
-            debug("totalAmount aft div: " + totalAmount);
-            debug("fee: " + this.fee);
-            const amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
+            let amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
+            amount = totalAmount /= listAddresses.length;
             debug("amount: " + amount);
 
             //calculating receivers

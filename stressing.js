@@ -17,6 +17,7 @@ debug("bcreg: " + bcreg);
 debug("fee: " + fee);
 debug("quantity: " + quantity);
 debug("logFile: " + logFile);
+debug("---");
 
 //creating new object
 const btc = new Bitcoin(bcreg, fee);
