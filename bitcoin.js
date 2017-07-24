@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('btcStressTest:server');
+const debug = require('debug')('stress');
 const { get, map, range, log } = require('./libs');
 const file = "log.log";
 
