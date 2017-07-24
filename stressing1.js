@@ -1,7 +1,7 @@
 //'use strict';
 
 require('dotenv').load();
-const debug = require('debug')('stress2');
+const debug = require('debug')('stress');
 const { promisify } = require('util');
 const { exec } = require('child_process');
 const { map, range } = require('./libs');
