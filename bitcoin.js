@@ -74,7 +74,9 @@ class Bitcoin
             {
                 totalAmount += utxo.amount;
             }
+            debug("totalAmount: " + totalAmount);
             let amount = ( totalAmount - (this.fee / 100 * totalAmount) ).toFixed(8);
+            debug("prediv amount: " + amount);
             amount = totalAmount /= listAddresses.length;
             debug("listAddressesLength: " + listAddresses.length);
             debug("fee: " + this.fee);
