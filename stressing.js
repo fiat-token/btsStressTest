@@ -37,6 +37,9 @@ const main = async (quantity) =>
             const hashHexTransaction = await cssTx(utxo, destinationAddresses);
             //log(logFile, hashHexTransaction);
         }
+
+        //FINAL
+        const hashBlock = await btc.generate();
     }
     catch(err)
     {
@@ -47,8 +50,7 @@ const main = async (quantity) =>
 //execution
 main(quantity);
 
-//FINAL
-const hashBlock = await btc.generate();
+
 
 //functions
 
