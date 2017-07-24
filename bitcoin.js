@@ -70,8 +70,12 @@ class Bitcoin
 
             //calculating amount
             let totalAmount = 0;
+            debug("UTXO pre for: ");
+            debug(UTXOs);
             for(const utxo of UTXOs)
             {
+                debug("one utxo:");
+                debug(utxo);
                 totalAmount += utxo.amount;
             }
             totalAmount /= UTXOs.length;
