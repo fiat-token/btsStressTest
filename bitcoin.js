@@ -159,10 +159,10 @@ class Bitcoin
     {
         try
         {
-            const destinationAddresses = await btc.generateNewAddress(quantity);
-            const rawTransaction = await btc.createRawTransaction(utxo, destinationAddresses);
-            const signedTransaction = await btc.signTransaction(rawTransaction);
-            const hashHexTransaction = await btc.sendTransaction(signedTransaction);
+            const destinationAddresses = await this.generateNewAddress(quantity);
+            const rawTransaction = await this.createRawTransaction(utxo, destinationAddresses);
+            const signedTransaction = await this.signTransaction(rawTransaction);
+            const hashHexTransaction = await this.sendTransaction(signedTransaction);
             //log(logFile, hashHexTransaction);
             return hashHexTransaction;
         }
