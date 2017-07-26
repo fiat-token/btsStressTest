@@ -56,8 +56,8 @@ const main = async (quantity) =>
         console.log("starting main..")
         const utxos = await btc.getUTXOs("all");
         if(utxos == null) { return null; }
-        //const filteredUTXOs = utxos;
-        const filteredUTXOs = filter(utxos, (utxo) => { return utxo.amount == 50} );
+        const filteredUTXOs = utxos;
+        //const filteredUTXOs = filter(utxos, (utxo) => { return utxo.amount == 50} );
         if(!filteredUTXOs)
         {
             console.log("no UTXO found with 50 BTC");
@@ -73,7 +73,6 @@ const main = async (quantity) =>
         //creo getmempoolinfo
         //creo generate parametrico
         //metto time dentro generate
-
     }
     catch(err)
     {
