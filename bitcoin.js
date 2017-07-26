@@ -80,11 +80,11 @@ class Bitcoin
                 totalAmount += utxo.amount;
             }
             //codice per calcolare una fee statica
-            const amount = (totalAmount - this.fee) / listAddresses.length;
+            let amount = (totalAmount - this.fee) / listAddresses.length;
+            amount = (amount).toFixed(8);
             // codice per calcolare la fee in percentuale
             // let amount = totalAmount - (this.fee / 100 * totalAmount);
             // amount /= listAddresses.length;
-            // amount = (amount).toFixed(8);
             // if (amount == 0)
             // {
             //     amount = 0.00000001;
