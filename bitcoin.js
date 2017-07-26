@@ -40,7 +40,7 @@ class Bitcoin
             let objUTXOs = JSON.parse(strUTXOs);
             if(nUTXOs != "all")
             {
-                //objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
+                objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
             }
             const filteredUTXOs = map(objUTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout, "amount": utxo.amount} });
             return filteredUTXOs;
@@ -87,6 +87,13 @@ class Bitcoin
             debug("listAddressesLength: " + listAddresses.length);
             debug("fee: " + this.fee);
             debug("amount: " + amount);
+
+            if(amount < 0)
+            {
+                console.log("amount isn't enough for making a transaction");
+                return null;
+            }
+
 
             //calculating receivers
             const obj = {};
@@ -161,6 +168,7 @@ class Bitcoin
         {
             const destinationAddresses = await this.generateNewAddress(quantity);
             const rawTransaction = await this.createRawTransaction(utxo, destinationAddresses);
+            if(rawTransaction == null) { return null; }
             const signedTransaction = await this.signTransaction(rawTransaction);
             const hashHexTransaction = await this.sendTransaction(signedTransaction);
             //log(logFile, hashHexTransaction);

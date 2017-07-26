@@ -22,6 +22,10 @@ debug("---");
 //creating new object
 const btc = new Bitcoin(bcreg, fee);
 
+
+// parte di pulizia:
+// prendi tutti gli UTXOs uguali e più piccoli della fee e li raggruppo in una tx e poi faccio generate 1
+
 //main
 const main = async (quantity) =>
 {
