@@ -53,6 +53,7 @@ const main = async (quantity) =>
     try
     {
         const utxos = await btc.getUTXOs("all");
+        const filteredUTXOs = filter(utxos, (utxo) => { return utxo.amount == 50} );
         if(utxos == null) { return null; }
 
         for(const utxo of utxos)
