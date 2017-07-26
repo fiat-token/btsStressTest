@@ -50,7 +50,8 @@ const get = async (cmd) =>
 {
     try
     {
-        const { err, stdout, stderr } = await execPromisified(cmd, {maxBuffer: 1024 * 50000}); 
+        const { err, stdout, stderr } = await execPromisified(cmd + ' | tr -d \"\\012\"', {maxBuffer: 1024 * 50000}); 
+        //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
         // potrei usare spawn e andare di chunk, ma ho trovato dei problemi. Setto il buffer elevato per via di "bcreg listunspent"
         if(stderr)
         {

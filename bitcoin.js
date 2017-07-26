@@ -2,7 +2,7 @@
 
 const debug = require('debug')('stress');
 const { get, map, range, log } = require('./libs');
-const file = "log.log";
+const file = "Bitcoin.log";
 
 class Bitcoin
 {
@@ -20,7 +20,7 @@ class Bitcoin
             const listAddress = [];
             for(const i of range(quantity))
             {
-                const newAddress = await get(this.bcreg +  " getnewaddress | tr -d \"\\012\""); //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
+                const newAddress = await get(this.bcreg +  " getnewaddress");
                 listAddress.push(newAddress);
             }
             return listAddress;
@@ -74,15 +74,16 @@ class Bitcoin
             {
                 totalAmount += utxo.amount;
             }
-            debug("totalAmount: " + totalAmount);
-            let amount = totalAmount - (this.fee / 100 * totalAmount);
-            debug("prediv amount: " + amount);
-            amount /= listAddresses.length;
-            amount = (amount).toFixed(8);
-            if (amount == 0)
-            {
-                amount = 0.00000001;
-            }
+            //codice per calcolare una fee statica
+            const amount = (totalAmount - this.fee) / listAddresses.length;
+            // codice per calcolare la fee in percentuale
+            // let amount = totalAmount - (this.fee / 100 * totalAmount);
+            // amount /= listAddresses.length;
+            // amount = (amount).toFixed(8);
+            // if (amount == 0)
+            // {
+            //     amount = 0.00000001;
+            // }
             debug("listAddressesLength: " + listAddresses.length);
             debug("fee: " + this.fee);
             debug("amount: " + amount);
@@ -150,6 +151,24 @@ class Bitcoin
         catch(err)
         {
             console.log("Error from generate: " + err);
+        }
+    }
+
+    //generate-create-sign-send transaction
+    async gcssTx (utxo, quantity)
+    {
+        try
+        {
+            const destinationAddresses = await btc.generateNewAddress(quantity);
+            const rawTransaction = await btc.createRawTransaction(utxo, destinationAddresses);
+            const signedTransaction = await btc.signTransaction(rawTransaction);
+            const hashHexTransaction = await btc.sendTransaction(signedTransaction);
+            //log(logFile, hashHexTransaction);
+            return hashHexTransaction;
+        }
+        catch(err)
+        {
+            console.log("Error from gcssTx: " + err);
         }
     }
 }
