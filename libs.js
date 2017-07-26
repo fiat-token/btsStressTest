@@ -30,6 +30,16 @@ const filter = (array, test) =>
     return filtered;
 }
 
+const sip = (array, chunk) =>
+{
+    const sipped = [];
+    for (let offset = 0; offset <array.length; offset += chunk) 
+    {
+        sipped.push(array.slice(offset, offset + chunk));
+    }
+    return sipped;
+}
+
 const range = (start, stop, step) =>
 {
     if (!stop) 
@@ -97,5 +107,6 @@ module.exports = {
     range,
     get,
     log,
-    filter
+    filter,
+    sip
 }
