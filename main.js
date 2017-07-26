@@ -55,7 +55,8 @@ const main = async (quantity) =>
     {
         const utxos = await btc.getUTXOs("all");
         if(utxos == null) { return null; }
-        const filteredUTXOs = filter(utxos, (utxo) => { return utxo.amount == 50} );
+        const filteredUTXOs = utxos;
+        //const filteredUTXOs = filter(utxos, (utxo) => { return utxo.amount == 50} );
         if(filteredUTXOs)
         {
             console.log("no UTXO found with 50 BTC");
