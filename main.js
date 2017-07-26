@@ -32,10 +32,12 @@ const cleaning = async () =>
     {
         const allUTXOs = await btc.getUTXOs(500);
         if(allUTXOs == null) { return null; }
+        console.log("allUTXOs: " + allUTXOs.length);
         const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < 0.01} );
-
+        console.log("filteredUTXOs: " + filteredUTXOs.length);
         for (const elem of sip(filteredUTXOs, 500))
         {
+            console.log("elem: " + elem.length);
             await btc.gcssTx(elem, 1);
         }
     }
