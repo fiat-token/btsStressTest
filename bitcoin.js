@@ -40,6 +40,11 @@ class Bitcoin
             let objUTXOs = JSON.parse(strUTXOs);
             if(nUTXOs != "all")
             {
+                if(objUTXOs.length < nUTXOs)
+                {
+                    console.log("too much UTXOs requested: only " + objUTXOs.length + " available");
+                    return null;
+                }
                 objUTXOs = objUTXOs.slice(0, nUTXOs); //bug: slice() is not a function
             }
             const filteredUTXOs = map(objUTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout, "amount": utxo.amount} });

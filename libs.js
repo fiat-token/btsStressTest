@@ -17,6 +17,19 @@ const map = (array, transform) =>
     return mapped;
 }
 
+const filter = (array, test) =>
+{
+    const filtered = [];
+    for (const elem of array)
+    {
+        if (test(elem))
+        {
+            filtered.push(elem);
+        }        
+    }
+    return filtered;
+}
+
 const range = (start, stop, step) =>
 {
     if (!stop) 
