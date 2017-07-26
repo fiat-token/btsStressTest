@@ -7,13 +7,11 @@
   {
     "pull": "git pull",
     "push": "git push",
-    "perl": "perl btcStressTest.pl",
-    "perldev": "run-s pull perl",
-    "node": "node stressing.js",
+    "node": "node main.js",
     "nodedev": "run-s pull node",
     "debug": "DEBUG=stress nodedev",
-    "startProd": "pm2 start stressing.js --name stressing -i 0",
-    "stopProd": "pm2 stop stressing",
+    "startProd": "pm2 start main.js --name main -i 0",
+    "stopProd": "pm2 stop main",
     "list": "pm2 list",
     "monit": "pm2 monit"
   },
