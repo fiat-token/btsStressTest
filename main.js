@@ -30,7 +30,7 @@ const cleaning = async () =>
 {
     try
     {
-        const allUTXOs = await btc.getUTXOs(500);
+        const allUTXOs = await btc.getUTXOs("all");
         if(allUTXOs == null) { return null; }
         console.log("allUTXOs: " + allUTXOs.length);
         const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < 0.01} );
