@@ -12,12 +12,12 @@ const fee = process.env.fee ||  0.00000001; // 1 satoshi
 const quantity = process.env.quantity || 1;
 const logFile = process.env.logFile || "listOfhashHexTransaction.log";
 
-debug("parameters:");
-debug("bcreg-> " + bcreg);
-debug("fee-> " + fee);
-debug("quantity-> " + quantity);
-debug("logFile-> " + logFile);
-debug("---");
+console.log("parameters:");
+console.log("bcreg-> " + bcreg);
+console.log("fee-> " + fee);
+console.log("quantity-> " + quantity);
+console.log("logFile-> " + logFile);
+console.log("---");
 
 //creating new object
 const btc = new Bitcoin(bcreg, fee);
@@ -30,15 +30,15 @@ const cleaning = async () =>
 {
     try
     {   
-        debug("start cleaning ..")
+        console.log("start cleaning ..")
         const allUTXOs = await btc.getUTXOs("all");
         if(allUTXOs == null) { return null; }
-        debug("allUTXOs: " + allUTXOs.length);
+        console.log("allUTXOs: " + allUTXOs.length);
         const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < 0.01} );
-        debug("filteredUTXOs: " + filteredUTXOs.length);
+        console.log("filteredUTXOs: " + filteredUTXOs.length);
         for (const elem of sip(filteredUTXOs, 500))
         {
-            debug("elem: " + elem.length);
+            console.log("elem: " + elem.length);
             await btc.gcssTx(elem, 1);
         }
     }
@@ -53,6 +53,7 @@ const main = async (quantity) =>
 {
     try
     {
+        console.log("starting main..")
         const utxos = await btc.getUTXOs("all");
         if(utxos == null) { return null; }
         //const filteredUTXOs = utxos;
@@ -62,7 +63,7 @@ const main = async (quantity) =>
             console.log("no UTXO found with 50 BTC");
             return;
         }
-
+        console.log("filteredUTXOs: " + filteredUTXOs.length);
         for(const utxo of filteredUTXOs)
         {
             await btc.gcssTx(utxo, quantity);
