@@ -48,12 +48,12 @@ const cleaning = async () =>
     }
 }
 
-//main
-const main = async (quantity) =>
+//elaborate
+const elaborate = async (quantity) =>
 {
     try
     {
-        console.log("starting main..")
+        console.log("starting elaborate..")
         const utxos = await btc.getUTXOs("all");
         if(utxos == null) { return null; }
         const filteredUTXOs = utxos;
@@ -76,11 +76,22 @@ const main = async (quantity) =>
     }
     catch(err)
     {
-        console.log("Error from main: " + err);
+        console.log("Error from elaborate: " + err);
     }
 }
 
 //execution
-cleaning();
-main(quantity);
-//functions
+const execution = async () =>
+{
+    try
+    {
+        await cleaning();
+        await main(quantity);
+    }
+    catch(err)
+    {
+        console.log("Error from execution: " + err);
+    }
+}
+
+execution();
