@@ -95,7 +95,7 @@ class Bitcoin
 
             if(amount < 0)
             {
-                console.log("amount isn't enough for making a transaction");
+                console.log("createRawTransaction: amount isn't enough for making a transaction");
                 return null;
             }
 
