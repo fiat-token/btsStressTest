@@ -29,15 +29,16 @@ const btc = new Bitcoin(bcreg, fee);
 const cleaning = async () =>
 {
     try
-    {
+    {   
+        debug("start cleaning ..")
         const allUTXOs = await btc.getUTXOs("all");
         if(allUTXOs == null) { return null; }
-        console.log("allUTXOs: " + allUTXOs.length);
+        debug("allUTXOs: " + allUTXOs.length);
         const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < 0.01} );
-        console.log("filteredUTXOs: " + filteredUTXOs.length);
+        debug("filteredUTXOs: " + filteredUTXOs.length);
         for (const elem of sip(filteredUTXOs, 500))
         {
-            console.log("elem: " + elem.length);
+            debug("elem: " + elem.length);
             await btc.gcssTx(elem, 1);
         }
     }
@@ -60,7 +61,7 @@ const main = async (quantity) =>
             console.log("no UTXO found with 50 BTC");
             return;
         }
-        
+
         for(const utxo of filteredUTXOs)
         {
             await btc.gcssTx(utxo, quantity);
@@ -80,5 +81,5 @@ const main = async (quantity) =>
 
 //execution
 cleaning();
-//main(quantity);
+main(quantity);
 //functions
