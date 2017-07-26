@@ -86,7 +86,7 @@ const execution = async () =>
     try
     {
         await cleaning();
-        await main(quantity);
+        await elaborate(quantity);
     }
     catch(err)
     {
