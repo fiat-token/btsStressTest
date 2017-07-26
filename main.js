@@ -3,7 +3,7 @@
 //libs
 const debug = require('debug')('stress');
 const Bitcoin = require('./bitcoin');
-const { log, filter } = require('./libs');
+const { log, filter, sip } = require('./libs');
 
 //default params
 require('dotenv').load();
