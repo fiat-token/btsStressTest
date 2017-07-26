@@ -96,5 +96,6 @@ module.exports = {
     map,
     range,
     get,
-    log
+    log,
+    filter
 }
