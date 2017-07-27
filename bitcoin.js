@@ -128,6 +128,10 @@ class Bitcoin
             const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
             debug("cmd-rawTx:" + cmd);
             const rawTransaction = await get(cmd);
+            if(rawTransaction == null) 
+            {
+                 throw new Error("rawTransaction is empty"); 
+            }
             debug("rawTransaction:" + rawTransaction);
             return rawTransaction;
         }

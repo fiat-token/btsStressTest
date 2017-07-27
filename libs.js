@@ -71,22 +71,22 @@ const range = (start, stop, step) =>
 
 const get = async (cmd) =>
 {
+    let ret = {};
     try
     {
-        const { err, stdout, stderr } = await execPromisified(cmd + ' | tr -d \"\\012\"', {maxBuffer: 1024 * 50000}); 
+        ret = await execPromisified(cmd + ' | tr -d \"\\012\"', {maxBuffer: 1024 * 50000});
         //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
         // potrei usare spawn e andare di chunk, ma ho trovato dei problemi. Setto il buffer elevato per via di "bcreg listunspent"
-        if(stderr)
+        if(ret.stderr)
         {
-            console.log("stderr of " + cmd + " is: " + stderr);
+            console.log("stderr of " + cmd + " is: " + ret.stderr);
         }
-
-        return stdout;
     }
     catch(err)
     {
         console.log("Error from get: " + err);
     }
+    return ret.stdout;
 }
 
 const log = async (file, data) =>
