@@ -61,7 +61,7 @@ const cleaner = async (cleanerThreshold) =>
 }
 
 //elaborate
-const elaborate = async (quantity) =>
+const elaborate = async (quantity, elaborateThreshold) =>
 {
     try
     {
@@ -102,8 +102,8 @@ const execution = async () =>
 {
     try
     {
-        await cleaner(threshold);
-        await elaborate(quantity);
+        await cleaner(cleanerThreshold);
+        await elaborate(quantity, elaborateThreshold);
     }
     catch(err)
     {
