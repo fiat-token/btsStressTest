@@ -40,8 +40,8 @@ const cleaner = async (cleanerThreshold) =>
         if(!cleaning) return;
         console.log("Start cleaning...")
         const allUTXOs = await btc.getUTXOs("all");
-        if(allUTXOs == null) return null;
         console.log("all UTXOs: " + allUTXOs.length);
+        if(allUTXOs == null || allUTXOs == 0) { return null; }
         const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < cleanerThreshold} );
         console.log("number of UTXOs under the threshold amount of " + cleanerThreshold + ": " + filteredUTXOs.length);
         const len = (sip(filteredUTXOs, 250)).length;
@@ -71,7 +71,8 @@ const elaborate = async (quantity, elaborateThreshold) =>
     {
         console.log("\nStart elaborating...")
         const allUTXOs = await btc.getUTXOs("all");
-        if(allUTXOs == null) { return null; }
+        console.log("all UTXOs: " + allUTXOs.length);
+        if(allUTXOs == null || allUTXOs == 0) { return null; }
         const filteredUTXOs = allUTXOs;
         //const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} );
         if(!filteredUTXOs)
