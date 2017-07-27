@@ -72,9 +72,9 @@ const elaborate = async (quantity) =>
         for(const i in filteredUTXOs)
         {
             const hashHexTransaction = await btc.gcssTx(filteredUTXOs[i], quantity);
-            readline.clearLine();  // clear current text
-            readline.cursorTo(0);  // move cursor to beginning of line
-            console.log(i + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
+            readline.clearLine(process.stdout, 0);  // clear current text
+            readline.cursorTo(process.stdout, 0);  // move cursor to beginning of line
+            process.stdout.write(i + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
 
         }
         //const hashBlock = await btc.generate();
