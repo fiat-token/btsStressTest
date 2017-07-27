@@ -29,7 +29,7 @@ console.log("---");
 const btc = new Bitcoin(bcreg, fee);
 
 
-const cleaning = async (threshold) =>
+const cleaner = async (threshold) =>
 {
     try
     {  
@@ -48,7 +48,7 @@ const cleaning = async (threshold) =>
     }
     catch(err)
     {
-        console.log("Error from cleaning: " + err);
+        console.log("Error from cleaner: " + err);
     }
 }
 
@@ -72,7 +72,6 @@ const elaborate = async (quantity) =>
         {
             await btc.gcssTx(utxo, quantity);
         }
-        //faccio lo slice dentro getUTXOs
         //const hashBlock = await btc.generate();
         //creo getmempoolinfo
         //creo generate parametrico
@@ -89,7 +88,7 @@ const execution = async () =>
 {
     try
     {
-        await cleaning(threshold);
+        await cleaner(threshold);
         await elaborate(quantity);
     }
     catch(err)
