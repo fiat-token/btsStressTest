@@ -37,15 +37,20 @@ class Bitcoin
         {
             debug("get all UTXOs...");
             const strUTXOs = await get(this.bcreg + " listunspent");
-            if(!(strUTXOs instanceof Array))
+            let objUTXOs;
+            try
+            {
+                objUTXOs = JSON.parse(strUTXOs);
+            }
+            catch(err)
             {
                 console.log("getUTXOs: listunpent didn't return an Array but returned: " + strUTXOs);
                 return null;
             }
-            let objUTXOs = JSON.parse(strUTXOs);
+            
             if(nUTXOs != "all")
             {
-                if(objUTXOs.length < nUTXOs)
+                if(nUTXOs > objUTXOs.length)
                 {
                     console.log("too much UTXOs requested: only " + objUTXOs.length + " available");
                     return null;
