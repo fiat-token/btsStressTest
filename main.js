@@ -3,8 +3,7 @@
 //libs
 const debug = require('debug')('stress');
 const Bitcoin = require('./bitcoin');
-const { log, filter, sip, checkArg } = require('./libs');
-const readline = require('readline');
+const { log, filter, sip, checkArg, loading } = require('./libs');
 
 //default params
 require('dotenv').load();
@@ -14,7 +13,9 @@ const fee = checkArg(process.env.fee, 0.00000001);
 const quantity = checkArg(process.env.quantity, 1);
 const logFile = checkArg(process.env.logFile, "listOfhashHexTransaction.log");
 const cleaning = checkArg(process.env.cleaning, true);
-const threshold = checkArg(process.env.threshold, 0.01);
+const cleanerThreshold = checkArg(process.env.cleanerThreshold, 0.01);
+const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
+const dimBlock = checkArg(process.env.dimBlock, 250);
 
 
 console.log("parameters:");
@@ -23,33 +24,39 @@ console.log("fee-> " + fee);
 console.log("quantity-> " + quantity);
 console.log("logFile-> " + logFile);
 console.log("cleaning-> " + cleaning);
-console.log("threshold-> " + threshold);
+console.log("cleanerThreshold-> " + cleanerThreshold);
 console.log("---");
 
 //creating new object
 const btc = new Bitcoin(bcreg, fee);
 
 
-const cleaner = async (threshold) =>
+const cleaner = async (cleanerThreshold) =>
 {
     try
     {  
         if(!cleaning) return;
-        console.log("start cleaning ..")
+        console.log("Start cleaning...")
         const allUTXOs = await btc.getUTXOs("all");
         if(allUTXOs == null) return null;
-        console.log("allUTXOs: " + allUTXOs.length);
-        const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < threshold} );
-        console.log("filteredUTXOs: " + filteredUTXOs.length);
-        for (const elem of sip(filteredUTXOs, 250))
+        console.log("all UTXOs: " + allUTXOs.length);
+        const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < cleanerThreshold} );
+        console.log("UTXOs under the threshold amount of " + cleanerThreshold + ": " + filteredUTXOs.length);
+        const len = (sip(filteredUTXOs, 250)).length;
+        console.log("One block is made of " + dimBlock +  " transactions");
+        for (const i in sip(filteredUTXOs, dimBlock))
         {
-            console.log(elem.length + "..");
-            await btc.gcssTx(elem, 1);
+            loading( i + "/" +  len + "blocks cleaning...");
+            await btc.gcssTx(filteredUTXOs[i], 1);
         }
     }
     catch(err)
     {
         console.log("Error from cleaner: " + err);
+    }
+    finally
+    {
+        console.log("");
     }
 }
 
@@ -58,23 +65,21 @@ const elaborate = async (quantity) =>
 {
     try
     {
-        console.log("starting elaborate..")
-        const utxos = await btc.getUTXOs("all");
-        if(utxos == null) { return null; }
-        const filteredUTXOs = utxos;
-        //const filteredUTXOs = filter(utxos, (utxo) => { return utxo.amount == 50} );
+        console.log("\nStart elaborating...")
+        const allUTXOs = await btc.getUTXOs("all");
+        if(allUTXOs == null) { return null; }
+        const filteredUTXOs = allUTXOs;
+        //const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} );
         if(!filteredUTXOs)
         {
             console.log("no UTXO found with 50 BTC");
             return;
         }
-        console.log("filteredUTXOs: " + filteredUTXOs.length);
+        console.log("UTXOs over the threshold amount of " + elaborateThreshold + ": " + filteredUTXOs.length);
         for(const i in filteredUTXOs)
         {
             const hashHexTransaction = await btc.gcssTx(filteredUTXOs[i], quantity);
-            readline.clearLine(process.stdout, 0);  // clear current text
-            readline.cursorTo(process.stdout, 0);  // move cursor to beginning of line
-            process.stdout.write(i + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
+            loading(i + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
 
         }
         //const hashBlock = await btc.generate();
@@ -85,6 +90,10 @@ const elaborate = async (quantity) =>
     catch(err)
     {
         console.log("Error from elaborate: " + err);
+    }
+    finally
+    {
+        console.log("");
     }
 }
 

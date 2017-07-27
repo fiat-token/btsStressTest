@@ -3,9 +3,11 @@
 const { promisify } = require('util');
 const { appendFile } = require('fs');
 const { exec } = require('child_process');
+const readline = require('readline');
 
 const execPromisified = promisify(exec);
 const appendPromisified = promisify(appendFile);
+
 
 const map = (array, transform) =>
 {
@@ -106,6 +108,14 @@ const checkArg = (arg, def) =>
     return typeof arg === "undefined" ? def : arg;
 }
 
+const loading = (line) =>
+{
+    readline.clearLine(process.stdout, 0);  // clear current text
+    readline.cursorTo(process.stdout, 0);  // move cursor to beginning of line
+    process.stdout.write(line);
+}
+
+
 
 module.exports = {
     map,
@@ -114,5 +124,6 @@ module.exports = {
     log,
     filter,
     sip,
-    checkArg
+    checkArg,
+    loading
 }
