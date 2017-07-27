@@ -40,9 +40,9 @@ const cleaner = async (threshold) =>
         console.log("allUTXOs: " + allUTXOs.length);
         const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < threshold} );
         console.log("filteredUTXOs: " + filteredUTXOs.length);
-        for (const elem of sip(filteredUTXOs, 500))
+        for (const elem of sip(filteredUTXOs, 250))
         {
-            console.log("elem: " + elem.length);
+            console.log(elem.length + "..");
             await btc.gcssTx(elem, 1);
         }
     }
