@@ -102,10 +102,16 @@ class Bitcoin
             debug("listAddressesLength: " + listAddresses.length);
             debug("fee: " + this.fee);
             debug("amount: " + amount);
+            debug("createRawTransaction: UTXOs.length: " + UTXOs.length);
 
             if(amount < 0)
             {
                 console.log("createRawTransaction: amount isn't enough for making a transaction");
+                console.log("createRawTransaction: amount: " + amount);
+                console.log("createRawTransaction: UTXOs.length: " + UTXOs.length);
+                console.log("createRawTransaction: listAddresses.length: " + listAddresses.length);
+                console.log("createRawTransaction: totalAmount: " + totalAmount);
+                console.log("createRawTransaction: fee: " + this.fee);
                 return null;
             }
 
