@@ -101,6 +101,11 @@ const log = async (file, data) =>
     }
 }
 
+const checkArg = (arg, def) =>
+{
+    return typeof arg === "undefined" ? def : arg;
+}
+
 
 module.exports = {
     map,
@@ -108,5 +113,6 @@ module.exports = {
     get,
     log,
     filter,
-    sip
+    sip,
+    checkArg
 }

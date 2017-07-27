@@ -3,38 +3,42 @@
 //libs
 const debug = require('debug')('stress');
 const Bitcoin = require('./bitcoin');
-const { log, filter, sip } = require('./libs');
+const { log, filter, sip, checkArg } = require('./libs');
 
 //default params
 require('dotenv').load();
-const bcreg = process.env.bcreg || "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf";
-const fee = process.env.fee ||  0.00000001; // 1 satoshi
-const quantity = process.env.quantity || 1;
-const logFile = process.env.logFile || "listOfhashHexTransaction.log";
+
+const bcreg = checkArg(process.env.bcreg, "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf");
+const fee = checkArg(process.env.fee, 0.00000001);
+const quantity = checkArg(process.env.quantity, 1);
+const logFile = checkArg(process.env.logFile, "listOfhashHexTransaction.log");
+const cleaning = checkArg(process.env.cleaning, true);
+const threshold = checkArg(process.env.threshold, 0.01);
+
 
 console.log("parameters:");
 console.log("bcreg-> " + bcreg);
 console.log("fee-> " + fee);
 console.log("quantity-> " + quantity);
 console.log("logFile-> " + logFile);
+console.log("cleaning-> " + cleaning);
+console.log("threshold-> " + threshold);
 console.log("---");
 
 //creating new object
 const btc = new Bitcoin(bcreg, fee);
 
 
-// parte di pulizia:
-// prendi tutti gli UTXOs uguali e più piccoli della fee e li raggruppo in una tx e poi faccio generate 1
-//cleaning
-const cleaning = async () =>
+const cleaning = async (threshold) =>
 {
     try
-    {   
+    {  
+        if(!cleaning) return;
         console.log("start cleaning ..")
         const allUTXOs = await btc.getUTXOs("all");
-        if(allUTXOs == null) { return null; }
+        if(allUTXOs == null) return null;
         console.log("allUTXOs: " + allUTXOs.length);
-        const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < 0.01} );
+        const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < threshold} );
         console.log("filteredUTXOs: " + filteredUTXOs.length);
         for (const elem of sip(filteredUTXOs, 500))
         {
@@ -85,7 +89,7 @@ const execution = async () =>
 {
     try
     {
-        await cleaning();
+        await cleaning(threshold);
         await elaborate(quantity);
     }
     catch(err)
