@@ -39,7 +39,7 @@ class Bitcoin
             const strUTXOs = await get(this.bcreg + " listunspent");
             if(!(strUTXOs instanceof Array))
             {
-                console.log("getUTXOs: listunpent didn't return an Array");
+                console.log("getUTXOs: listunpent didn't return an Array but returned: " + strUTXOs);
                 return null;
             }
             let objUTXOs = JSON.parse(strUTXOs);
