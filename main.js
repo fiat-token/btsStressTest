@@ -4,6 +4,7 @@
 const debug = require('debug')('stress');
 const Bitcoin = require('./bitcoin');
 const { log, filter, sip, checkArg } = require('./libs');
+const readline = require('readline');
 
 //default params
 require('dotenv').load();
@@ -68,9 +69,13 @@ const elaborate = async (quantity) =>
             return;
         }
         console.log("filteredUTXOs: " + filteredUTXOs.length);
-        for(const utxo of filteredUTXOs)
+        for(const i in filteredUTXOs)
         {
-            await btc.gcssTx(utxo, quantity);
+            const hashHexTransaction = await btc.gcssTx(filteredUTXOs[i], quantity);
+            readline.clearLine();  // clear current text
+            readline.cursorTo(0);  // move cursor to beginning of line
+            console.log(i + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
+
         }
         //const hashBlock = await btc.generate();
         //creo getmempoolinfo
