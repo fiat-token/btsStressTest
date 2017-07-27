@@ -18,14 +18,16 @@ const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
 const dimBlock = checkArg(process.env.dimBlock, 250);
 
 
-console.log("parameters:");
+console.log("\nParameters:");
 console.log("bcreg-> " + bcreg);
 console.log("fee-> " + fee);
 console.log("quantity-> " + quantity);
 console.log("logFile-> " + logFile);
 console.log("cleaning-> " + cleaning);
-console.log("cleanerThreshold-> " + cleanerThreshold);
-console.log("---");
+console.log("Threshold for cleaner->" + cleanerThreshold);
+console.log("Threshold for elaborate-> " + elaborateThreshold);
+console.log("Block dimension-> " + dimBlock);
+console.log("");
 
 //creating new object
 const btc = new Bitcoin(bcreg, fee);
@@ -41,9 +43,11 @@ const cleaner = async (cleanerThreshold) =>
         if(allUTXOs == null) return null;
         console.log("all UTXOs: " + allUTXOs.length);
         const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < cleanerThreshold} );
-        console.log("UTXOs under the threshold amount of " + cleanerThreshold + ": " + filteredUTXOs.length);
+        console.log("number of UTXOs under the threshold amount of " + cleanerThreshold + ": " + filteredUTXOs.length);
         const len = (sip(filteredUTXOs, 250)).length;
-        console.log("One block is made of " + dimBlock +  " transactions");
+
+        
+
         for (const i in sip(filteredUTXOs, dimBlock))
         {
             loading( i + "/" +  len + "blocks cleaning...");
@@ -75,7 +79,7 @@ const elaborate = async (quantity, elaborateThreshold) =>
             console.log("no UTXO found with 50 BTC");
             return;
         }
-        console.log("UTXOs over the threshold amount of " + elaborateThreshold + ": " + filteredUTXOs.length);
+        console.log("number of UTXOs over the threshold amount of " + elaborateThreshold + ": " + filteredUTXOs.length);
         for(const i in filteredUTXOs)
         {
             const hashHexTransaction = await btc.gcssTx(filteredUTXOs[i], quantity);
