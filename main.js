@@ -42,7 +42,7 @@ const cleaner = async (cleanerThreshold) =>
         const allUTXOs = await btc.getUTXOs("all");
         console.log("all UTXOs: " + allUTXOs.length);
         if(allUTXOs == null || allUTXOs == 0) { return null; }
-        const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < cleanerThreshold} );
+        const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < cleanerThreshold } );
         console.log("number of UTXOs under the threshold amount of " + cleanerThreshold + ": " + filteredUTXOs.length);
 
         const blocks = Math.floor(filteredUTXOs.length / dimBlock);
@@ -75,8 +75,8 @@ const elaborate = async (quantity, elaborateThreshold) =>
         const allUTXOs = await btc.getUTXOs("all");
         console.log("all UTXOs: " + allUTXOs.length);
         if(allUTXOs == null || allUTXOs == 0) { return null; }
-        const filteredUTXOs = allUTXOs;
-        //const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} ); // BUG
+        //const filteredUTXOs = allUTXOs;
+        const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} ); // BUG
         if(!filteredUTXOs)
         {
             console.log("no UTXO found with 50 BTC");
