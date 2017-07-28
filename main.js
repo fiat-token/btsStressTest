@@ -48,9 +48,9 @@ const cleaner = async (cleanerThreshold) =>
 
         for (const i in sipped)
         {
-            loading( i + "/" + sipped.length + "blocks cleaning...");
+            loading( i + "/" + sipped.length + " blocks cleaning...");
             await btc.gcssTx(sipped[i], 1);
-            const res = await getMemPoolInfo();
+            const res = await btc.getMemPoolInfo();
             console.log(res.size);
         }
     }
