@@ -89,8 +89,8 @@ const elaborate = async (quantity, elaborateThreshold) =>
         }
         //const hashBlock = await btc.generate();
         //creo getmempoolinfo
-        //creo generate parametrico
-        //metto time dentro generate
+
+        //metto time dentro 
     }
     catch(err)
     {
@@ -102,6 +102,11 @@ const elaborate = async (quantity, elaborateThreshold) =>
     }
 }
 
+const mining = async() =>
+{
+    getMemPoolInfo();
+    generateTime();
+}
 //execution
 const execution = async () =>
 {

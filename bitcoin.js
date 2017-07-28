@@ -171,12 +171,12 @@ class Bitcoin
         }
     }
 
-    async generate()
+    async generate(blocks)
     {
         try
         {
             console.log("generating new block...");
-            const hashBlock = await get(this.bcreg + " generate 1");
+            const hashBlock = await get(this.bcreg + " generate " + blocks);
             console.log("hashBlock:" + hashBlock);
             return hashBlock;
         }
@@ -202,6 +202,36 @@ class Bitcoin
         catch(err)
         {
             console.log("Error from gcssTx: " + err);
+        }
+    }
+
+    async getMemPoolInfo()
+    {
+        try
+        {
+            debug("calling getmempoolinfo...");
+            const info = await get(this.bcreg + " getmempoolinfo");
+            debug("getmempoolinfo: " + JSON.stringify(info));
+            return info;
+        }
+        catch(err)
+        {
+            debug("Error from getMemPoolInfo: " + err);
+        }
+    }
+
+    async generateTime(blocks)
+    {
+        try
+        {
+            console.log("generating new block with time...");
+            const output = await get("time " + this.bcreg + " generate " + blocks);
+            console.log("output:" + output);
+            return output;
+        }
+        catch(err)
+        {
+            console.log("Error from generateTime: " + err);
         }
     }
 }
