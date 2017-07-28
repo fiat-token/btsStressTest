@@ -44,14 +44,12 @@ const cleaner = async (cleanerThreshold) =>
         if(allUTXOs == null || allUTXOs == 0) { return null; }
         const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < cleanerThreshold} );
         console.log("number of UTXOs under the threshold amount of " + cleanerThreshold + ": " + filteredUTXOs.length);
-        const len = (sip(filteredUTXOs, 250)).length;
+        const sipped = sip(filteredUTXOs, dimBlock);
 
-        
-
-        for (const i in sip(filteredUTXOs, dimBlock))
+        for (const i in sipped)
         {
-            loading( i + "/" +  len + "blocks cleaning...");
-            await btc.gcssTx(filteredUTXOs[i], 1);
+            loading( i + "/" + sipped.length + "blocks cleaning...");
+            await btc.gcssTx(sipped[i], 1);
         }
     }
     catch(err)
@@ -74,7 +72,7 @@ const elaborate = async (quantity, elaborateThreshold) =>
         console.log("all UTXOs: " + allUTXOs.length);
         if(allUTXOs == null || allUTXOs == 0) { return null; }
         const filteredUTXOs = allUTXOs;
-        //const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} );
+        //const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} ); // BUG
         if(!filteredUTXOs)
         {
             console.log("no UTXO found with 50 BTC");
@@ -88,9 +86,6 @@ const elaborate = async (quantity, elaborateThreshold) =>
 
         }
         //const hashBlock = await btc.generate();
-        //creo getmempoolinfo
-
-        //metto time dentro 
     }
     catch(err)
     {
@@ -107,6 +102,7 @@ const mining = async() =>
     getMemPoolInfo();
     generateTime();
 }
+
 //execution
 const execution = async () =>
 {
