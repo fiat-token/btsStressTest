@@ -44,12 +44,13 @@ const cleaner = async (cleanerThreshold) =>
         if(allUTXOs == null || allUTXOs == 0) { return null; }
         const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < cleanerThreshold} );
         console.log("number of UTXOs under the threshold amount of " + cleanerThreshold + ": " + filteredUTXOs.length);
-        const sipped = sip(filteredUTXOs, dimBlock);
 
-        for (const i in sipped)
+        const blocks = Math.floor(filteredUTXOs.length / dimBlock);
+        let index = 0;
+        for (const elem of sip(filteredUTXOs, dimBlock))
         {
-            loading( i + "/" + sipped.length + " blocks cleaning...");
-            await btc.gcssTx(sipped[i], 1);
+            loading(index++ + "/" + blocks + " blocks cleaning...");
+            await btc.gcssTx(elem, 1);
             const res = await btc.getMemPoolInfo();
             console.log(res.size);
         }

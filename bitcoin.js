@@ -132,7 +132,7 @@ class Bitcoin
             {
                  throw new Error("rawTransaction is empty"); 
             }
-            debug("rawTransaction:" + rawTransaction);
+            //debug("rawTransaction:" + rawTransaction);
             return rawTransaction;
         }
         catch(err)
@@ -147,7 +147,7 @@ class Bitcoin
         {
             debug("signing raw transaction...");
             const signedTransaction = await get(this.bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
-            debug("signedTransaction:" + signedTransaction);
+            //debug("signedTransaction:" + signedTransaction);
             return signedTransaction;
         }
         catch(err)
