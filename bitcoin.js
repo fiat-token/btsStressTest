@@ -81,7 +81,7 @@ class Bitcoin
             
             senders = map(UTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout} });
             senders = JSON.stringify(senders);
-            debug("senders: " + senders);
+            //debug("senders: " + senders);
 
             //calculating amount
             let totalAmount = 0;
@@ -123,10 +123,10 @@ class Bitcoin
                 obj[address] = amount;
             }
             const recipients = JSON.stringify(obj);
-            debug("recipients: " + recipients);
+            //debug("recipients: " + recipients);
 
             const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
-            debug("cmd-rawTx:" + cmd);
+            //debug("cmd-rawTx:" + cmd);
             const rawTransaction = await get(cmd);
             if(rawTransaction == null) 
             {
@@ -211,8 +211,8 @@ class Bitcoin
         {
             debug("calling getmempoolinfo...");
             const info = await get(this.bcreg + " getmempoolinfo");
-            debug("getmempoolinfo: " + JSON.stringify(info));
-            return info;
+            debug("getmempoolinfo: " + info);
+            return JSON.parse(info);
         }
         catch(err)
         {
