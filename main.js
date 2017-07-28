@@ -50,6 +50,7 @@ const cleaner = async (cleanerThreshold) =>
         for (const elem of sip(filteredUTXOs, dimBlock))
         {
             loading(index++ + "/" + blocks + " blocks cleaning...");
+            console.log("elem size: " + elem.length);
             await btc.gcssTx(elem, 1);
             const res = await btc.getMemPoolInfo();
             console.log(res.size);
