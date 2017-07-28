@@ -33,8 +33,9 @@ const filter = (array, test) =>
     return filtered;
 }
 
-const sip = (array, chunk) =>
+const sip = (array, preChunk) =>
 {
+    let chunk = Number(preChunk);
     debug("array:" + JSON.stringify(array));
     debug("chunk:" + chunk);
     const sipped = [];
