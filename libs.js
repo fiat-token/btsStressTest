@@ -36,17 +36,10 @@ const filter = (array, test) =>
 const sip = (array, preChunk) =>
 {
     let chunk = Number(preChunk);
-    debug("array:" + JSON.stringify(array));
-    debug("chunk:" + chunk);
     const sipped = [];
     for (let offset = 0; offset < array.length; offset += chunk) 
     {
-        debug("offset:" +offset);
-        debug("array.length:" + array.length);
-        debug("chunk:" + chunk);
-        debug("offset + chunk:" + (offset + chunk));
         sipped.push(array.slice(offset, offset + chunk));
-        debug("sipped.length:" + sipped.length);
     }
     return sipped;
 }

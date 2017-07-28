@@ -81,7 +81,7 @@ const elaborate = async (quantity, elaborateThreshold) =>
             return;
         }
         console.log("number of UTXOs over the threshold amount of " + elaborateThreshold + ": " + filteredUTXOs.length);
-        for(const i in filteredUTXOs)
+        for(let i in filteredUTXOs)
         {
             const hashHexTransaction = await btc.gcssTx(filteredUTXOs[i], quantity);
             loading(i++ + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
