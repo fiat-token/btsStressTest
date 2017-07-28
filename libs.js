@@ -1,5 +1,6 @@
 'use strict';
 
+const debug = require('debug')('stress');
 const { promisify } = require('util');
 const { appendFile } = require('fs');
 const { exec } = require('child_process');
