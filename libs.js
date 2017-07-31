@@ -108,7 +108,16 @@ const log = async (file, data) =>
 
 const checkArg = (arg, def) =>
 {
-    return typeof arg === "undefined" ? def : arg;
+    try
+    {
+        if(arg == "false") arg = false;
+        const data = def.constructor(typeof arg === "undefined" ? def : arg);
+        return data;
+    }
+    catch(err)
+    {
+        console.log("error from checkArg: " + err);
+    }
 }
 
 const loading = (line) =>

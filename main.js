@@ -12,7 +12,7 @@ const bcreg = checkArg(process.env.bcreg, "bitcoin-cli -conf=/home/usrBTC/regtes
 const fee = checkArg(process.env.fee, 0.00000001);
 const quantity = checkArg(process.env.quantity, 1);
 const logFile = checkArg(process.env.logFile, "listOfhashHexTransaction.log");
-const cleaning = Boolean(checkArg(process.env.cleaning, true));
+const cleaning = checkArg(process.env.cleaning, true);
 const cleanerThreshold = checkArg(process.env.cleanerThreshold, 0.01);
 const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
 const dimBlock = checkArg(process.env.dimBlock, 250);
