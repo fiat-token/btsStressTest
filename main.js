@@ -49,8 +49,8 @@ const cleaner = async (cleanerThreshold) =>
         let index = 0;
         for (const elem of sip(filteredUTXOs, dimBlock))
         {
-            const res = await btc.getMemPoolInfo();
-            loading("mempoolsize: " + res.size + " - " + index++ + "/" + blocks + " blocks cleaning...");
+            const mempool = await btc.getMemPoolInfo();
+            loading("mempoolsize: " + mempool.size + " - " + index++ + "/" + blocks + " blocks cleaning...");
             await btc.gcssTx(elem, 1);
         }
     }
@@ -84,9 +84,10 @@ const elaborate = async (quantity, elaborateThreshold) =>
         for(let i in filteredUTXOs)
         {
             const hashHexTransaction = await btc.gcssTx(filteredUTXOs[i], quantity);
-            loading(++i + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
+            const mempool = await btc.getMemPoolInfo();
+            loading("mempoolsize: " + mempool.size + " - " +  ++i + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
         }
-        //const hashBlock = await btc.generate();
+        //const hashBlock = await btc.generate(1);
     }
     catch(err)
     {
