@@ -16,6 +16,7 @@ const cleaning = checkArg(process.env.cleaning, true);
 const cleanerThreshold = checkArg(process.env.cleanerThreshold, 0.01);
 const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
 const dimBlock = checkArg(process.env.dimBlock, 250);
+const maxTXs = checkArg(process.env.maxTXs, 100);
 
 
 console.log("\nParameters:");
@@ -65,23 +66,23 @@ const cleaner = async (cleanerThreshold) =>
 }
 
 //elaborate
-const elaborate = async (quantity, elaborateThreshold) =>
+const elaborate = async (quantity, elaborateThreshold, maxTXs) =>
 {
     try
     {
-        console.log("\nStart elaborating...")
+        console.log("\nStart elaborating...");
         const allUTXOs = await btc.getUTXOs("all");
         console.log("all UTXOs: " + allUTXOs.length);
         if(allUTXOs == null || allUTXOs == 0) { return null; }
         //const filteredUTXOs = allUTXOs;
-        const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} ); // BUG
+        const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} );
         if(!filteredUTXOs)
         {
-            console.log("no UTXO found with 50 BTC");
+            console.log("no UTXO found with amount greater than " + elaborateThreshold);
             return;
         }
         console.log("number of UTXOs over the threshold amount of " + elaborateThreshold + ": " + filteredUTXOs.length);
-        for(let i in filteredUTXOs)
+        for(let i in filteredUTXOs.slice(0, maxTXs))
         {
             const hashHexTransaction = await btc.gcssTx(filteredUTXOs[i], quantity);
             const mempool = await btc.getMemPoolInfo();
@@ -110,8 +111,12 @@ const execution = async () =>
 {
     try
     {
-        await cleaner(cleanerThreshold);
-        await elaborate(quantity, elaborateThreshold);
+        while (true) {
+            setTimeout(function () {
+                await cleaner(cleanerThreshold);
+                await elaborate(quantity, elaborateThreshold, maxTXs);
+            }, 10000);
+        }
     }
     catch(err)
     {
