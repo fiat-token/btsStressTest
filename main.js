@@ -4,6 +4,7 @@
 const debug = require('debug')('stress');
 const Bitcoin = require('./bitcoin');
 const { log, filter, sip, checkArg, loading } = require('./libs');
+const { sleep } = require('sleep');
 
 //default params
 require('dotenv').load();
@@ -17,6 +18,7 @@ const cleanerThreshold = checkArg(process.env.cleanerThreshold, 0.01);
 const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
 const dimBlock = checkArg(process.env.dimBlock, 250);
 const maxTXs = checkArg(process.env.maxTXs, 100);
+const waitSec = checkArg(process.env.waitSec, 10);
 
 
 console.log("\nParameters:");
@@ -28,6 +30,8 @@ console.log("cleaning-> " + cleaning);
 console.log("Threshold for cleaner->" + cleanerThreshold);
 console.log("Threshold for elaborate-> " + elaborateThreshold);
 console.log("Block dimension-> " + dimBlock);
+console.log("Max Transactions -> " + maxTXs);
+console.log("Waiting seconds -> " + waitSec);
 console.log("");
 
 //creating new object
@@ -112,10 +116,9 @@ const execution = async () =>
     try
     {
         while (true) {
-            setTimeout(function () {
-                await cleaner(cleanerThreshold);
-                await elaborate(quantity, elaborateThreshold, maxTXs);
-            }, 10000);
+            sleep(waitSec);
+            await cleaner(cleanerThreshold);
+            await elaborate(quantity, elaborateThreshold, maxTXs);
         }
     }
     catch(err)
