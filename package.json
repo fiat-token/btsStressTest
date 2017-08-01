@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "nodejs script for stressing the bitcoin core with multiple transactions",
-  "scripts":
-  {
+  "scripts": {
     "pull": "git pull",
     "push": "git push",
     "node": "node main.js",
@@ -19,7 +18,8 @@
     "debug": "^2.6.8",
     "dotenv": "^4.0.0",
     "npm-run-all": "^4.0.2",
-    "pm2": "^2.6.1"
+    "pm2": "^2.6.1",
+    "sleep": "^5.1.1"
   },
   "repository": {
     "type": "git",
