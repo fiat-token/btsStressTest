@@ -116,9 +116,10 @@ const execution = async () =>
     try
     {
         while (true) {
-            sleep(waitSec);
             await cleaner(cleanerThreshold);
             await elaborate(quantity, elaborateThreshold, maxTXs);
+            console.log("Waiting " + waitSec + " seconds..");
+            sleep(waitSec);            
         }
     }
     catch(err)
