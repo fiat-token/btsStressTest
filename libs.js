@@ -127,8 +127,6 @@ const loading = (line) =>
     process.stdout.write(line);
 }
 
-
-
 module.exports = {
     map,
     range,

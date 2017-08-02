@@ -1,8 +1,7 @@
 'use strict';
 
 const debug = require('debug')('bitcoin');
-const { get, map, range, log } = require('./libs');
-const file = "Bitcoin.log";
+const { get, map, range, log } = require('../libs');
 
 class Bitcoin
 {
@@ -196,7 +195,6 @@ class Bitcoin
             if(rawTransaction == null) { return null; }
             const signedTransaction = await this.signTransaction(rawTransaction);
             const hashHexTransaction = await this.sendTransaction(signedTransaction);
-            //log(logFile, hashHexTransaction);
             return hashHexTransaction;
         }
         catch(err)
