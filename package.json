@@ -6,13 +6,11 @@
   "scripts": {
     "pull": "git pull",
     "push": "git push",
-    "node": "node main.js",
+    "node": "node immortal.js",
     "nodedev": "run-s pull node",
-    "debug": "DEBUG=stress nodedev",
-    "startProd": "pm2 start main.js --name main -i 0",
-    "stopProd": "pm2 stop main",
-    "list": "pm2 list",
-    "monit": "pm2 monit"
+    "cleaner": "node cleaner.js",
+    "maker": "node maker.js",
+    "immortal": "node immortal.js"
   },
   "dependencies": {
     "debug": "^2.6.8",
