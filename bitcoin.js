@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('stress');
+const debug = require('debug')('bitcoin');
 const { get, map, range, log } = require('./libs');
 const file = "Bitcoin.log";
 
