@@ -7,18 +7,32 @@ const Cleaner = require('./cleaner');
 const { checkArg } = require('./libs');
 const { sleep } = require('sleep');
 
-//default params
 require('dotenv').load();
+
+//immortal param
+const bcreg = checkArg(process.env.bcreg, "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf");
+const fee = checkArg(process.env.fee, 0.00000001);
 const cleanerSwitch = checkArg(process.env.cleanerSwitch, true);
 const waitSec = checkArg(process.env.waitSec, 10);
+const logFileImmortal = checkArg(process.env.logFileImmortal, "logFileImmortal.log");
+
+//maker param
+const logFileMaker = checkArg(process.env.logFileMaker, "logFileMaker.log");
+const quantity = checkArg(process.env.quantity, 1);
+const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
+const maxTXs = checkArg(process.env.maxTXs, 100);
+
+//cleaner param
+const logFileCleaner = checkArg(process.env.logFileCleaner, "logFileCleaner.log");
+const dimBlock = checkArg(process.env.dimBlock, 250);
 
 //immortal
 const immortal = async () =>
 {
     try
     {
-        const maker = new Maker(bcreg, fee, logFile, quantity, elaborateThreshold, maxTXs);
-        const cleaner = new Cleaner(bcreg, fee, logFile, cleanerThreshold, dimBlock);
+        const maker = new Maker(bcreg, fee, logFileMaker, quantity, elaborateThreshold, maxTXs);
+        const cleaner = new Cleaner(bcreg, fee, logFileCleaner, cleanerThreshold, dimBlock);
         while (true) 
         {
             if(cleanerSwitch) await cleaner.clean();
