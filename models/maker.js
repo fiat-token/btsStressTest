@@ -49,19 +49,19 @@ class Maker
             console.log("all UTXOs: " + allUTXOs.length);
             if(allUTXOs == null || allUTXOs == 0) { return null; }
             //const filteredUTXOs = allUTXOs;
-            let filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} );
+            let filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= this.elaborateThreshold} );
             if(!filteredUTXOs)
             {
-                console.log("no UTXO found with amount greater than " + elaborateThreshold);
+                console.log("no UTXO found with amount greater than " + this.elaborateThreshold);
                 return;
             }
-            console.log("number of UTXOs over the threshold amount of " + elaborateThreshold + ": " + filteredUTXOs.length);
+            console.log("number of UTXOs over the threshold amount of " + this.elaborateThreshold + ": " + filteredUTXOs.length);
 
-            filteredUTXOs = maxTXs != 0 ? filteredUTXOs.slice(0, maxTXs) : filteredUTXOs;
+            filteredUTXOs = this.maxTXs != 0 ? filteredUTXOs.slice(0, this.maxTXs) : filteredUTXOs;
 
             for(let i in filteredUTXOs)
             {
-                const hashHexTransaction = await this.btc.gcssTx(filteredUTXOs[i], quantity);
+                const hashHexTransaction = await this.btc.gcssTx(filteredUTXOs[i], this.quantity);
                 const mempool = await this.btc.getMemPoolInfo();
                 loading("mempoolsize: " + mempool.size + " - " +  ++i + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
             }
@@ -76,21 +76,5 @@ class Maker
         }
     }
 }
-
-//main
-const main = async () =>
-{
-    try
-    {
-        const maker = new Maker(bcreg, fee, logFile, quantity, elaborateThreshold, maxTXs);
-        await maker.make();
-    }
-    catch(err)
-    {
-        console.log("Error from main: " + err);
-    }
-}
-
-main();
 
 module.exports = Maker;

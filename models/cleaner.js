@@ -31,11 +31,11 @@ class Cleaner
             const allUTXOs = await this.btc.getUTXOs("all");
             console.log("all UTXOs: " + allUTXOs.length);
             if(allUTXOs == null || allUTXOs == 0) { return null; }
-            const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < cleanerThreshold } );
-            console.log("number of UTXOs under the threshold amount of " + cleanerThreshold + ": " + filteredUTXOs.length);
-            const blocks = Math.floor(filteredUTXOs.length / dimBlock);
+            const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < this.cleanerThreshold } );
+            console.log("number of UTXOs under the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
+            const blocks = Math.floor(filteredUTXOs.length / this.dimBlock);
             let index = 0;
-            for (const elem of sip(filteredUTXOs, dimBlock))
+            for (const elem of sip(filteredUTXOs, this.dimBlock))
             {
                 const mempool = await this.btc.getMemPoolInfo();
                 loading("mempoolsize: " + mempool.size + " - " + index++ + "/" + blocks + " blocks cleaning...");
