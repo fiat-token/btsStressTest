@@ -3,7 +3,7 @@
 //libs
 const debug = require('debug')('maincleaner');
 const Cleaner = require('./models/cleaner');
-const { checkArg } = require('../libs');
+const { checkArg } = require('./libs');
 
 //default params
 require('dotenv').load();

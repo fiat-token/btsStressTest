@@ -3,7 +3,7 @@
 //libs
 const debug = require('debug')('mainmaker');
 const Maker = require('./models/maker');
-const { checkArg } = require('../libs');
+const { checkArg } = require('./libs');
 
 //default params
 require('dotenv').load();
