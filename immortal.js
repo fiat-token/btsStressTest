@@ -2,8 +2,8 @@
 
 //libs
 const debug = require('debug')('immortal');
-const Maker = require('./maker');
-const Cleaner = require('./cleaner');
+const Maker = require('./models/maker');
+const Cleaner = require('./models/cleaner');
 const { checkArg } = require('./libs');
 const { sleep } = require('sleep');
 
