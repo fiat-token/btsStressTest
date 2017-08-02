@@ -40,7 +40,7 @@ class Cleaner
         try
         {
             console.log("Start cleaning...")
-            const allUTXOs = await btc.getUTXOs("all");
+            const allUTXOs = await this.btc.getUTXOs("all");
             console.log("all UTXOs: " + allUTXOs.length);
             if(allUTXOs == null || allUTXOs == 0) { return null; }
             const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < cleanerThreshold } );
@@ -49,9 +49,9 @@ class Cleaner
             let index = 0;
             for (const elem of sip(filteredUTXOs, dimBlock))
             {
-                const mempool = await btc.getMemPoolInfo();
+                const mempool = await this.btc.getMemPoolInfo();
                 loading("mempoolsize: " + mempool.size + " - " + index++ + "/" + blocks + " blocks cleaning...");
-                await btc.gcssTx(elem, 1);
+                await this.btc.gcssTx(elem, 1);
             }
         }
         catch(err)
