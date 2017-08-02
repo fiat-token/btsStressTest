@@ -36,8 +36,16 @@ const immortal = async () =>
         const cleaner = new Cleaner(bcreg, fee, logFileCleaner, cleanerThreshold, dimBlock);
         while (true) 
         {
-            if(cleanerSwitch) await cleaner.clean();
-            await maker.make();
+            if(cleanerSwitch) 
+            {
+                await cleaner.clean();
+                await maker.make();
+            }
+            else
+            {
+                await maker.make();
+            }
+
             console.log("Waiting " + waitSec + " seconds..");
             sleep(waitSec);            
         }
