@@ -25,6 +25,7 @@ const maxTXs = checkArg(process.env.maxTXs, 100);
 //cleaner param
 const logFileCleaner = checkArg(process.env.logFileCleaner, "logFileCleaner.log");
 const dimBlock = checkArg(process.env.dimBlock, 250);
+const cleanerThreshold = checkArg(process.env.cleanerThreshold, 0.01);
 
 //immortal
 const immortal = async () =>
