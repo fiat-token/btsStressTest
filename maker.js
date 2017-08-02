@@ -49,7 +49,7 @@ class Maker
             console.log("all UTXOs: " + allUTXOs.length);
             if(allUTXOs == null || allUTXOs == 0) { return null; }
             //const filteredUTXOs = allUTXOs;
-            const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} );
+            let filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= elaborateThreshold} );
             if(!filteredUTXOs)
             {
                 console.log("no UTXO found with amount greater than " + elaborateThreshold);
