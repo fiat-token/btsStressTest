@@ -90,7 +90,7 @@ const elaborate = async (quantity, elaborateThreshold, maxTXs) =>
         {
             const hashHexTransaction = await btc.gcssTx(filteredUTXOs[i], quantity);
             const mempool = await btc.getMemPoolInfo();
-            loading("mempoolsize: " + mempool.size + " - " +  ++i + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
+            loading("mempoolsize: " + mempool.size + " - " +  ++i + "/" +  filteredUTXOs.slice(0, maxTXs).length + " - hashHexTransaction: " + hashHexTransaction);
         }
         //const hashBlock = await btc.generate(1);
     }
