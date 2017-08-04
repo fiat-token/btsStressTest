@@ -57,7 +57,7 @@ class Maker
             console.log("number of UTXOs over the threshold amount of " + this.elaborateThreshold + ": " + filteredUTXOs.length);
             filteredUTXOs = this.maxTXs != 0 ? filteredUTXOs.slice(0, this.maxTXs) : filteredUTXOs;
 
-            await this.btc.gcssTx(sip(filteredUTXOs, this.dimBlock), this.quantity);
+            await this.btc.gcssTx(filteredUTXOs, this.quantity);
            
         }
         catch(err)

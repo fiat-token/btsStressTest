@@ -198,7 +198,7 @@ class Bitcoin
         }
         catch(err)
         {
-            console.log("Error from gcssTx: " + err);
+            console.log("Error from gcsTx: " + err);
         }
     }
 
