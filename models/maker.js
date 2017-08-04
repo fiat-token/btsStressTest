@@ -59,12 +59,19 @@ class Maker
 
             filteredUTXOs = this.maxTXs != 0 ? filteredUTXOs.slice(0, this.maxTXs) : filteredUTXOs;
 
-            for(let i in filteredUTXOs)
+            let toSendTXOs = [];
+            for(let elem of filteredUTXOs)
             {
-                const hashHexTransaction = await this.btc.gcssTx(filteredUTXOs[i], this.quantity);
-                const mempool = await this.btc.getMemPoolInfo();
-                loading("mempoolsize: " + mempool.size + " - " +  ++i + "/" +  filteredUTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
+                toSendTXOs.push(await this.btc.gcsTx(elem, this.quantity));
             }
+
+            for(let i in toSendTXOs)
+            {
+                const hashHexTransaction = await this.btc.sendTransaction(toSendTXOs[i]);
+                const mempool = await this.btc.getMemPoolInfo();
+                loading("mempoolsize: " + mempool.size + " - " +  ++i + "/" +  toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);            
+            }
+
         }
         catch(err)
         {

@@ -185,8 +185,8 @@ class Bitcoin
         }
     }
 
-    //generate-create-sign-send transaction
-    async gcssTx (utxo, quantity)
+    //generate-create-sign transaction
+    async gcsTx (utxo, quantity)
     {
         try
         {
@@ -194,8 +194,7 @@ class Bitcoin
             const rawTransaction = await this.createRawTransaction(utxo, destinationAddresses);
             if(rawTransaction == null) { return null; }
             const signedTransaction = await this.signTransaction(rawTransaction);
-            const hashHexTransaction = await this.sendTransaction(signedTransaction);
-            return hashHexTransaction;
+            return signedTransaction;
         }
         catch(err)
         {
