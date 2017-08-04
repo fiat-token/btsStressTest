@@ -15,7 +15,7 @@ const logFile = checkArg(process.env.logFileMaker, "maker.log");
 const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
 const maxTXs = checkArg(process.env.maxTXs, 100);
 
-//main
+//main 
 const main = async () =>
 {
     try
