@@ -63,6 +63,7 @@ class Maker
             for(let elem of filteredUTXOs)
             {
                 toSendTXOs.push(await this.btc.gcsTx(elem, this.quantity));
+                loading("Number of tx ready to send: " + toSendTXOs.length);
             }
 
             for(let i in toSendTXOs)
