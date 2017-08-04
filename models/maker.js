@@ -48,7 +48,6 @@ class Maker
             const allUTXOs = await this.btc.getUTXOs("all");
             console.log("all UTXOs: " + allUTXOs.length);
             if(allUTXOs == null || allUTXOs == 0) { return null; }
-            //const filteredUTXOs = allUTXOs;
             let filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= this.elaborateThreshold} );
             if(!filteredUTXOs)
             {
@@ -56,23 +55,10 @@ class Maker
                 return;
             }
             console.log("number of UTXOs over the threshold amount of " + this.elaborateThreshold + ": " + filteredUTXOs.length);
-
             filteredUTXOs = this.maxTXs != 0 ? filteredUTXOs.slice(0, this.maxTXs) : filteredUTXOs;
 
-            let toSendTXOs = [];
-            for(let elem of filteredUTXOs)
-            {
-                toSendTXOs.push(await this.btc.gcsTx(elem, this.quantity));
-                loading("Number of tx ready to send: " + toSendTXOs.length);
-            }
-
-            for(let i in toSendTXOs)
-            {
-                const hashHexTransaction = await this.btc.sendTransaction(toSendTXOs[i]);
-                const mempool = await this.btc.getMemPoolInfo();
-                loading("mempoolsize: " + mempool.size + " - " +  ++i + "/" +  toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);            
-            }
-
+            await gcssTx(sip(filteredUTXOs, this.dimBlock), this.quantity);
+           
         }
         catch(err)
         {

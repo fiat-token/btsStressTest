@@ -34,21 +34,9 @@ class Cleaner
             const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < this.cleanerThreshold } );
             console.log("number of UTXOs under the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
             const blocks = Math.floor(filteredUTXOs.length / this.dimBlock);
-            let index = 0;
             
-            let toSendTXOs = [];
-            for (const elem of sip(filteredUTXOs, this.dimBlock))
-            {
-                toSendTXOs.push(await this.btc.gcsTx(elem, 1));
-                loading("Number of tx ready to send: " + toSendTXOs.length);
-            }
-
-            for(let i in toSendTXOs)
-            {
-                const hashHexTransaction = await this.btc.sendTransaction(toSendTXOs[i]);
-                const mempool = await this.btc.getMemPoolInfo();
-                loading("mempoolsize: " + mempool.size + " - " +  ++i + "/" +  toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);            
-            }
+            await gcssTx(sip(filteredUTXOs, this.dimBlock), 1);
+            
         }
         catch(err)
         {

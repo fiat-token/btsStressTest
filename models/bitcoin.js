@@ -202,6 +202,30 @@ class Bitcoin
         }
     }
 
+    //generate-create-sign-send transaction
+    async gcssTx(filteredUTXOs, quantity) 
+    {
+        try 
+        {
+            let toSendTXOs = [];
+            for (const elem of filteredUTXOs) 
+            {
+                toSendTXOs.push(await this.gcsTx(elem, quantity));
+                loading("Number of tx ready to send: " + toSendTXOs.length);
+            }
+
+            for (let i in toSendTXOs) 
+            {
+                const hashHexTransaction = await this.sendTransaction(toSendTXOs[i]);
+                const mempool = await this.getMemPoolInfo();
+                loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
+            }
+        }
+        catch (err) {
+            console.log("Error from gcssTx: " + err);
+        }
+    }
+
     async getMemPoolInfo()
     {
         try
