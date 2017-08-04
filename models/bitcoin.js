@@ -1,7 +1,7 @@
 'use strict';
 
 const debug = require('debug')('bitcoin');
-const { get, map, range, log } = require('../libs');
+const { get, map, range, log, loading } = require('../libs');
 
 class Bitcoin
 {
