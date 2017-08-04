@@ -39,7 +39,8 @@ class Cleaner
             {
                 const mempool = await this.btc.getMemPoolInfo();
                 loading("mempoolsize: " + mempool.size + " - " + index++ + "/" + blocks + " blocks cleaning...");
-                await this.btc.gcssTx(elem, 1);
+                const signedTransaction = await this.btc.gcsTx(elem, 1);
+                await this.btc.sendTransaction(signedTransaction);
             }
         }
         catch(err)
