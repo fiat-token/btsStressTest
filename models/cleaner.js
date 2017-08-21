@@ -34,7 +34,6 @@ class Cleaner
             const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < this.cleanerThreshold } );
             console.log("number of UTXOs under the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
             const blocks = Math.floor(filteredUTXOs.length / this.dimBlock);
-            
             await this.btc.gcssTx(sip(filteredUTXOs, this.dimBlock), 1);
             
         }

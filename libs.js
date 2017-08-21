@@ -2,13 +2,10 @@
 
 const debug = require('debug')('libs');
 const { promisify } = require('util');
-const { appendFile } = require('fs');
 const { exec } = require('child_process');
 const readline = require('readline');
 
 const execPromisified = promisify(exec);
-const appendPromisified = promisify(appendFile);
-
 
 const map = (array, transform) =>
 {
@@ -46,7 +43,6 @@ const sip = (array, preChunk) =>
 
 const range = (start, stop, step) =>
 {
-
     if (!stop) 
     {
         // one param defined
@@ -55,14 +51,8 @@ const range = (start, stop, step) =>
     }
 
     if (!step) step = 1;
-    {
-        
-    }
 
-    if ((step > 0 && start >= stop) || (step < 0 && start <= stop)) 
-    {
-        return [];
-    }
+    if ((step > 0 && start >= stop) || (step < 0 && start <= stop)) return [];
 
     const result = [];
 
@@ -79,7 +69,7 @@ const get = async (cmd) =>
     let ret = {};
     try
     {
-        ret = await execPromisified(cmd + ' | tr -d \"\\012\"', {maxBuffer: 1024 * 50000});
+        ret = await execPromisified(cmd + ' | tr -d \"\\012\"', {maxBuffer: 1024 * 500000});
         //  tr -d "\012" è il chomp del perl, serve per mozzare il "\n", ossia l'accapo
         // potrei usare spawn e andare di chunk, ma ho trovato dei problemi. Setto il buffer elevato per via di "bcreg listunspent"
         if(ret.stderr)
@@ -92,18 +82,6 @@ const get = async (cmd) =>
         console.log("Error from get: " + err);
     }
     return ret.stdout;
-}
-
-const log = async (file, data) =>
-{
-    try
-    {
-       await appendPromisified(file, data);
-    }
-    catch(err)
-    {
-        console.log("Error from log:" + err);
-    }
 }
 
 const checkArg = (arg, def) =>
@@ -131,7 +109,6 @@ module.exports = {
     map,
     range,
     get,
-    log,
     filter,
     sip,
     checkArg,

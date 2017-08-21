@@ -32,8 +32,9 @@ const immortal = async () =>
 {
     try
     {
-        const maker = new Maker(bcreg, fee, logFileMaker, quantity, elaborateThreshold, maxTXs);
         const cleaner = new Cleaner(bcreg, fee, logFileCleaner, cleanerThreshold, dimBlock);
+        const maker = new Maker(bcreg, fee, logFileMaker, quantity, elaborateThreshold, maxTXs);
+        
         while (true) 
         {
             if(cleanerSwitch) 
