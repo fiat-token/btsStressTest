@@ -1,7 +1,7 @@
 'use strict';
 
 //libs
-const Logger = require('./logger');
+const Logger = require('./models/logger');
 const Cleaner = require('./models/cleaner');
 const { checkArg } = require('./libs');
 require('dotenv').load();
