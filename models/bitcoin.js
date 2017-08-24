@@ -14,12 +14,12 @@ class Bitcoin
         {
             user: checkArg(process.env.user, "regtest"),
             pass: checkArg(process.env.pass, "regtest"),
-            socket: checkArg(process.env.socket, "localhost:8080")
+            socket: checkArg(process.env.socket, "http://localhost:8080")
         } 
-        this.client = new callRPC(connectionParams);
+        this.client = new callRPC(this.connectionParams);
         this.file = checkArg(process.env.logFile, "test.log");
         this.format = "Bitcoin";
-        this.log = new Logger(file, format);
+        this.log = new Logger(this.file, this.format);
     }
 
     async generateNewAddresses(howMany = 1) // howMany: Number

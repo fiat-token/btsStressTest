@@ -1,23 +1,31 @@
 'use strict';
 
 const fetchPromise = require('node-fetch');
+const Logger = require('./logger');
 
 class callRPC
 {
     constructor(connectionParams) 
     {
+        this.log = new Logger("callRPC.log", "callRPC");
         this.user = connectionParams.user;
         this.pass = connectionParams.pass;
         this.header = { 'Authorization': this.getBasicAuth(this.user, this.pass) };
         this.socket = connectionParams.socket;
         this.counter = 0;
+        
+        this.log.info("user: " + this.user);
+        this.log.info("pass: " + this.pass);
+        this.log.info("header: " + JSON.stringify(this.header));
+        this.log.info("socket: " + this.socket);
+        this.log.info("counter: " + this.counter);
     }
 
     async fetch(method, param = 'null')
     {
         try
         {
-            const bodyJSON = 
+            const bodyJSON =
             {
                 method: method,
                 params: param,
@@ -31,11 +39,11 @@ class callRPC
         }
         catch(err)
         {
-            console.log("Error from fetch: " + err);
+            this.log.error("fetch: " + err);
         }
     }
 
-    getBasicAuth (user, pass) 
+    getBasicAuth (user, pass)
     {
         try
         {
@@ -47,7 +55,7 @@ class callRPC
         }
         catch(err)
         {
-            console.log("error from getBasicAuth: " + err);
+            this.log.error("getBasicAuth: " + err);
         }
     }
 
