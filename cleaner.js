@@ -13,7 +13,6 @@ const log = new Logger(logFile, format);
 
 const fee = checkArg(process.env.fee, 0.00000001);
 const quantity = checkArg(process.env.quantity, 1);
-const logFile = checkArg(process.env.logFileCleaner, "cleaner.log");
 const cleanerThreshold = checkArg(process.env.cleanerThreshold, 0.01);
 const dimBlock = checkArg(process.env.dimBlock, 250);
 
