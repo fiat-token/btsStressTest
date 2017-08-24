@@ -3,7 +3,7 @@
 //libs
 const Logger = require('./logger');
 const Bitcoin = require('./bitcoin');
-const { filter, sip, loading } = require('../libs');
+const { filter, sip, loading, map } = require('../libs');
 
 class Cleaner
 {
@@ -15,7 +15,7 @@ class Cleaner
         this.dimBlock = dimBlock;
         this.format = "Cleaner";
         this.log = new Logger(this.logFile, this.format);
-        this.log.info("\nCleaner parameters:");
+        this.log.info("Cleaner parameters:");
         this.log.info("fee= " + this.fee);
         this.log.info("logFile= " + this.logFile);
         this.log.info("Threshold for cleaner= " + this.cleanerThreshold);
@@ -33,9 +33,8 @@ class Cleaner
             if(allUTXOs == null || allUTXOs == 0) { return null; }
             const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < this.cleanerThreshold } );
             this.log.info("number of UTXOs under the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
-            const blocks = Math.floor(filteredUTXOs.length / this.dimBlock);
+            if(filteredUTXOs.length == 0) return;
             await this.btc.gcssTx(sip(filteredUTXOs, this.dimBlock), 1);
-            
         }
         catch(err)
         {

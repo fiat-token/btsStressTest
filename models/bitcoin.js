@@ -29,7 +29,7 @@ class Bitcoin
             this.log.debug("generating " + howMany + " new addresses...");
             const promises = range(howMany).map(() => this.client.getnewaddress());
             let listAddress = await Promise.all(promises);
-            if(!listAddress instanceof Array) listAddress = new Array(listAddress);
+         //   if(!listAddress instanceof Array) listAddress = new Array(listAddress);
             return listAddress;
         }
         catch(err)
@@ -61,7 +61,7 @@ class Bitcoin
         {
             this.log.debug("creating a raw transaction...");
             //calculate fee and final amount for each address
-            const totalAmount = reduce(arrayUTXOs, (a, b) => { return a + b;});
+            const totalAmount = reduce(arrayUTXOs, (a, b) => { return a + b.amount;});
             const amount = ( (totalAmount - this.fee) / listAddresses.length ).toFixed(8);;
             this.log.debug("total number of UTXOs: " + arrayUTXOs.length);
             this.log.debug("total number of addresses: " + listAddresses.length);
@@ -71,7 +71,7 @@ class Bitcoin
             if(amount <= 0) throw new Error("amount is " + amount);
             //creating recipients
             let recipients = {};
-            recipients = map(listAddresses, (address) => { recipients[address] = amount; } );
+            for(const elem of listAddresses) recipients[elem] = amount; 
             const rawTransaction = await this.client.createrawtransaction(arrayUTXOs, recipients);
             this.log.debug("rawTransaction:" + rawTransaction);
             return rawTransaction;
@@ -102,7 +102,7 @@ class Bitcoin
         try
         {
             this.log.debug("sending " + signedTransactions.length + " transaction...");
-            const hashHexTransaction = await this.client.sendrawtransaction(signedTransaction);
+            const hashHexTransaction = await this.client.sendrawtransaction(signedTransactions);
             this.log.debug("hashHexTransaction: " + hashHexTransaction);
             return hashHexTransaction;
         }
@@ -136,7 +136,7 @@ class Bitcoin
             const rawTransaction = await this.createRawTransaction(utxo, destinationAddresses);
             if(rawTransaction == null) throw new Error("Raw Transaction is null");
             const signedTransaction = await this.signTransaction([rawTransaction]);
-            return signedTransaction;
+            return signedTransaction.hex;
         }
         catch(err)
         {

@@ -21,7 +21,7 @@ class callRPC
         this.log.info("counter: " + this.counter);
     }
 
-    async fetch(method, param = 'null')
+    async fetch(method, param = 'null') // param = []
     {
         try
         {
@@ -85,7 +85,7 @@ class callRPC
     async signrawtransaction(hex) { return await this.fetch('signrawtransaction', hex)}; // hex: Array
     async sendrawtransaction(hex) { return await this.fetch('sendrawtransaction', hex)}; // hex: Array
     async generate(blocks) { return await this.fetch('generate', blocks)}; // hex: Array
-    async getmempoolinfo() { return await this.fetch('getmempoolinfo')};
+    async getmempoolinfo() { return await this.fetch('getmempoolinfo', [])};
 }
 
 module.exports = callRPC;

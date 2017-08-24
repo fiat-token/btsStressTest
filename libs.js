@@ -31,7 +31,7 @@ const filter = (array, test) =>
 
 const reduce = (array, combine, start = 0) =>
 {
-    const current = start;
+    let current = start;
     for(const elem of array)
     {
         current = combine(current, elem);
