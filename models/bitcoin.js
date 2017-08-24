@@ -7,9 +7,8 @@ require('dotenv').load();
 
 class Bitcoin
 {
-    constructor(bcreg, fee) 
+    constructor(fee) 
     {
-        this.bcreg = bcreg;
         this.fee = fee;
         this.connectionParams =
         {

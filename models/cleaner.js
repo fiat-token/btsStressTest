@@ -4,9 +4,10 @@
 const Logger = require('./logger');
 const Bitcoin = require('./bitcoin');
 const { filter, sip, loading } = require('../libs');
+
 class Cleaner
 {
-    constructor(bcreg, fee, logFile, cleanerThreshold, dimBlock)
+    constructor(fee, logFile, cleanerThreshold, dimBlock)
     {
         this.btc = new Bitcoin(bcreg, fee);
         this.logFile = logFile;
