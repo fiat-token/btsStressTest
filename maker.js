@@ -8,7 +8,6 @@ const { checkArg } = require('./libs');
 //default params
 require('dotenv').load();
 
-const bcreg = checkArg(process.env.bcreg, "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf");
 const fee = checkArg(process.env.fee, 0.00000001);
 const quantity = checkArg(process.env.quantity, 1);
 const logFile = checkArg(process.env.logFileMaker, "maker.log");
@@ -20,7 +19,7 @@ const main = async () =>
 {
     try
     {
-        const maker = new Maker(bcreg, fee, logFile, quantity, elaborateThreshold, maxTXs);
+        const maker = new Maker(fee, logFile, quantity, elaborateThreshold, maxTXs);
         await maker.make();
     }
     catch(err)

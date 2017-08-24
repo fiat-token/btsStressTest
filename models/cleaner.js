@@ -9,14 +9,13 @@ class Cleaner
 {
     constructor(fee, logFile, cleanerThreshold, dimBlock)
     {
-        this.btc = new Bitcoin(bcreg, fee);
+        this.btc = new Bitcoin(fee);
         this.logFile = logFile;
         this.cleanerThreshold = cleanerThreshold;
         this.dimBlock = dimBlock;
         this.format = "Cleaner";
         this.log = new Logger(this.logFile, this.format);
         this.log.info("\nCleaner parameters:");
-        this.log.info("bcreg= " + this.bcreg);
         this.log.info("fee= " + this.fee);
         this.log.info("logFile= " + this.logFile);
         this.log.info("Threshold for cleaner= " + this.cleanerThreshold);

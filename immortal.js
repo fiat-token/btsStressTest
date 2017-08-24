@@ -10,7 +10,6 @@ const { sleep } = require('sleep');
 require('dotenv').load();
 
 //immortal param
-const bcreg = checkArg(process.env.bcreg, "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf");
 const fee = checkArg(process.env.fee, 0.00000001);
 const cleanerSwitch = checkArg(process.env.cleanerSwitch, true);
 const waitSec = checkArg(process.env.waitSec, 10);
@@ -32,8 +31,8 @@ const immortal = async () =>
 {
     try
     {
-        const cleaner = new Cleaner(bcreg, fee, logFileCleaner, cleanerThreshold, dimBlock);
-        const maker = new Maker(bcreg, fee, logFileMaker, quantity, elaborateThreshold, maxTXs);
+        const cleaner = new Cleaner(fee, logFileCleaner, cleanerThreshold, dimBlock);
+        const maker = new Maker(fee, logFileMaker, quantity, elaborateThreshold, maxTXs);
         
         while (true) 
         {

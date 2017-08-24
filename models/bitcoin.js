@@ -1,7 +1,7 @@
 'use strict';
 
 const Logger = require('./logger');
-const { get, map, range, log, loading, reduce } = require('../libs');
+const { get, map, range, log, loading, reduce, checkArg } = require('../libs');
 const callRPC = require('./callRPC');
 require('dotenv').load();
 

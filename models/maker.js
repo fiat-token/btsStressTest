@@ -9,7 +9,6 @@ const { sleep } = require('sleep');
 //default params
 require('dotenv').load();
 
-const bcreg = checkArg(process.env.bcreg, "bitcoin-cli -conf=/home/usrBTC/regtest/bitcoin.conf");
 const fee = checkArg(process.env.fee, 0.00000001);
 const quantity = checkArg(process.env.quantity, 1);
 const logFile = checkArg(process.env.logFileMaker, "maker.log");
@@ -22,16 +21,15 @@ const maxTXs = checkArg(process.env.maxTXs, 100);
 //elaborate
 class Maker
 {
-    constructor(bcreg, fee, logFile, quantity, elaborateThreshold, maxTXs)
+    constructor(fee, logFile, quantity, elaborateThreshold, maxTXs)
     {
-        this.btc = new Bitcoin(bcreg, fee);
+        this.btc = new Bitcoin(fee);
         this.logFile = logFile;
         this.quantity = quantity;
         this.elaborateThreshold = elaborateThreshold;
         this.maxTXs = maxTXs;
 
         console.log("\nMaker parameters:");
-        console.log("bcreg= " + bcreg);
         console.log("fee= " + fee);
         console.log("quantity= " + quantity);
         console.log("logFile= " + logFile);

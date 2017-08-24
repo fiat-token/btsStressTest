@@ -3,7 +3,7 @@
 //libs
 const Logger = require('./models/logger');
 const Cleaner = require('./models/cleaner');
-const { checkArg } = require('./libs');
+const { checkArg, map } = require('./libs');
 require('dotenv').load();
 
 //default params
@@ -26,7 +26,7 @@ const main = async () =>
     }
     catch(err)
     {
-        log.error("maincleaner: " + err);
+        log.error("main: " + err);
     }
 }
 

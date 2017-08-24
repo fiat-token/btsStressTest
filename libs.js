@@ -1,6 +1,5 @@
 'use strict';
 
-const debug = require('debug')('libs');
 const { promisify } = require('util');
 const { exec } = require('child_process');
 const readline = require('readline');
