@@ -1,10 +1,9 @@
 'use strict';
 
 //libs
-const debug = require('debug')('cleaner');
+const Logger = require('./logger');
 const Bitcoin = require('./bitcoin');
 const { filter, sip, loading } = require('../libs');
-
 class Cleaner
 {
     constructor(bcreg, fee, logFile, cleanerThreshold, dimBlock)
@@ -13,37 +12,38 @@ class Cleaner
         this.logFile = logFile;
         this.cleanerThreshold = cleanerThreshold;
         this.dimBlock = dimBlock;
-
-        console.log("\nCleaner parameters:");
-        console.log("bcreg= " + bcreg);
-        console.log("fee= " + fee);
-        console.log("logFile= " + logFile);
-        console.log("Threshold for cleaner= " + cleanerThreshold);
-        console.log("Block dimension= " + dimBlock);
-        console.log("");
+        this.format = "Cleaner";
+        this.log = new Logger(this.logFile, this.format);
+        this.log.info("\nCleaner parameters:");
+        this.log.info("bcreg= " + this.bcreg);
+        this.log.info("fee= " + this.fee);
+        this.log.info("logFile= " + this.logFile);
+        this.log.info("Threshold for cleaner= " + this.cleanerThreshold);
+        this.log.info("Block dimension= " + this.dimBlock);
+        this.log.info("");
     }
 
     async clean()
     {
         try
         {
-            console.log("Start cleaning...")
-            const allUTXOs = await this.btc.getUTXOs("all");
-            console.log("all UTXOs: " + allUTXOs.length);
+            this.log.info("Start cleaning...")
+            const allUTXOs = await this.btc.getUTXOs();
+            this.log.info("all UTXOs: " + allUTXOs.length);
             if(allUTXOs == null || allUTXOs == 0) { return null; }
             const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < this.cleanerThreshold } );
-            console.log("number of UTXOs under the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
+            this.log.info("number of UTXOs under the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
             const blocks = Math.floor(filteredUTXOs.length / this.dimBlock);
             await this.btc.gcssTx(sip(filteredUTXOs, this.dimBlock), 1);
             
         }
         catch(err)
         {
-            console.log("Error from clean: " + err);
+            this.log.error("clean: " + err);
         }
         finally
         {
-            console.log("");
+            this.log.info("");
         }
     }
 }

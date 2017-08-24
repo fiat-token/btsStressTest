@@ -27,7 +27,7 @@ class Logger
         {
             if(logLevel <= this.actualLevel)
             {
-                const str = this.listLevel[logLevel] + ": TIME:" + Date.now() + " PID:" + process.pid + " " + this.format + " - " + data + "\n";
+                const str = "[ " + this.listLevel[logLevel] + ": TIME:" + Date.now() + " PID:" + process.pid + " " + this.format + " ] " + data + "\n";
 
                 if(this.onDisk) await appendPromisified(file, str);
                 if(this.onTerminal) process.stdout.write(str);

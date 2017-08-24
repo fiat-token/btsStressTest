@@ -1,7 +1,9 @@
 'use strict';
 
-const debug = require('debug')('bitcoin');
-const { get, map, range, log, loading } = require('../libs');
+const Logger = require('./logger');
+const { get, map, range, log, loading, reduce } = require('../libs');
+const callRPC = require('./callRPC');
+require('dotenv').load();
 
 class Bitcoin
 {
@@ -9,191 +11,137 @@ class Bitcoin
     {
         this.bcreg = bcreg;
         this.fee = fee;
+        this.connectionParams =
+        {
+            user: checkArg(process.env.user, "regtest"),
+            pass: checkArg(process.env.pass, "regtest"),
+            socket: checkArg(process.env.socket, "localhost:8080")
+        } 
+        this.client = new callRPC(connectionParams);
+        this.file = checkArg(process.env.logFile, "test.log");
+        this.format = "Bitcoin";
+        this.log = new Logger(file, format);
     }
 
-    async generateNewAddress(quantity)
+    async generateNewAddresses(howMany = 1) // howMany: Number
     {
         try
         {
-            debug("generating " + quantity + " new addresses...");
-            const listAddress = [];
-            for(const i of range(quantity))
-            {
-                const newAddress = await get(this.bcreg +  " getnewaddress");
-                listAddress.push(newAddress);
-            }
+            this.log.debug("generating " + howMany + " new addresses...");
+            const promises = range(howMany).map(() => this.client.getnewaddress());
+            let listAddress = await Promise.all(promises);
+            if(!listAddress instanceof Array) listAddress = new Array(listAddress);
             return listAddress;
         }
         catch(err)
         {
-            console.log("Error from generateNewAddress: " + err);
+            this.log.error("generateNewAddresses: " + err);
         }
     }
 
-    async getUTXOs(nUTXOs)
+    async getUTXOs(howMany) // howMany: Number
     {
         try
         {
-            debug("get all UTXOs...");
-            const strUTXOs = await get(this.bcreg + " listunspent");
-            if(strUTXOs == null) throw new Error("listunpent didn't return anything"); 
-
-            let objUTXOs = JSON.parse(strUTXOs);
-            if(objUTXOs == null) throw new Error("listunpent didn't return an Array"); 
-
-            
-            if(nUTXOs != "all")
-            {
-                if(nUTXOs > objUTXOs.length)
-                {
-                    console.log("too much UTXOs requested: only " + objUTXOs.length + " available");
-                    return null;
-                }
-                objUTXOs = objUTXOs.slice(0, nUTXOs);
-            }
-            const filteredUTXOs = map(objUTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout, "amount": utxo.amount} });
-            return filteredUTXOs;
+            let showNumber = howMany;
+            if(!howMany) showNumber = "all";
+            this.log.debug("retrieving " + showNumber + " UTXOs...");
+            const arrayUTXOs = await this.client.listunspent();
+            if(howMany) arrayUTXOs = arrayUTXOs.slice(0, howMany);
+            return arrayUTXOs;
         }
         catch(err)
         {
-            console.log("Error from getUTXOs: " + err);
+            this.log.error("getUTXOs: " + err);
         }
     }
 
-    async createRawTransaction(UTXOs, listAddresses)
+    async createRawTransaction(arrayUTXOs, listAddresses) // arrayUTXOs: Array of Objects; listAddresses: Array of strings
     {
         try
         {
-            debug("creating raw transaction...");
-
-            //calculating senders
-            let senders;
-            if(!(UTXOs instanceof Array))
-            {
-                UTXOs = JSON.parse('[' + JSON.stringify(UTXOs) + ']');
-            }
-            
-            senders = map(UTXOs, (utxo) => { return {"txid": utxo.txid, "vout": utxo.vout} });
-            senders = JSON.stringify(senders);
-            //debug("senders: " + senders);
-
-            //calculating amount
-            let totalAmount = 0;
-            for(const utxo of UTXOs)
-            {
-                totalAmount += utxo.amount;
-            }
-            //codice per calcolare una fee statica
-            let amount = (totalAmount - this.fee) / listAddresses.length;
-            amount = (amount).toFixed(8);
-            // codice per calcolare la fee in percentuale
-            // let amount = totalAmount - (this.fee / 100 * totalAmount);
-            // amount /= listAddresses.length;
-            // if (amount == 0)
-            // {
-            //     amount = 0.00000001;
-            // }
-            debug("listAddressesLength: " + listAddresses.length);
-            debug("fee: " + this.fee);
-            debug("amount: " + amount);
-            debug("createRawTransaction: UTXOs.length: " + UTXOs.length);
-
-            if(amount < 0)
-            {
-                console.log("createRawTransaction: amount isn't enough for making a transaction");
-                console.log("createRawTransaction: amount: " + amount);
-                console.log("createRawTransaction: UTXOs.length: " + UTXOs.length);
-                console.log("createRawTransaction: listAddresses.length: " + listAddresses.length);
-                console.log("createRawTransaction: totalAmount: " + totalAmount);
-                console.log("createRawTransaction: fee: " + this.fee);
-                return null;
-            }
-
-
-            //calculating receivers
-            const obj = {};
-            for(const address of listAddresses)
-            {
-                obj[address] = amount;
-            }
-            const recipients = JSON.stringify(obj);
-            //debug("recipients: " + recipients);
-
-            const cmd = this.bcreg + " createrawtransaction '''" + senders + "''' '''" + recipients +  "'''";
-            //debug("cmd-rawTx:" + cmd);
-            const rawTransaction = await get(cmd);
-            if(rawTransaction == null) 
-            {
-                 throw new Error("rawTransaction is empty"); 
-            }
-            //debug("rawTransaction:" + rawTransaction);
+            this.log.debug("creating a raw transaction...");
+            //calculate fee and final amount for each address
+            const totalAmount = reduce(arrayUTXOs, (a, b) => { return a + b;});
+            const amount = ( (totalAmount - this.fee) / listAddresses.length ).toFixed(8);;
+            this.log.debug("total number of UTXOs: " + arrayUTXOs.length);
+            this.log.debug("total number of addresses: " + listAddresses.length);
+            this.log.debug("fee: " + this.fee);
+            this.log.debug("totalAmount: " + amount);
+            this.log.debug("amount for each address: " + amount);
+            if(amount <= 0) throw new Error("amount is " + amount);
+            //creating recipients
+            let recipients = {};
+            recipients = map(listAddresses, (address) => { recipients[address] = amount; } );
+            const rawTransaction = await this.client.createrawtransaction(arrayUTXOs, recipients);
+            this.log.debug("rawTransaction:" + rawTransaction);
             return rawTransaction;
         }
         catch(err)
         {
-            console.log("Error from createRawTransaction: " + err);
+            this.log.error("createRawTransaction: " + err);
         }
     }
 
-    async signTransaction(rawTransaction)
+    async signTransaction(rawTransaction) // rawTransaction: Array of strings
     {
         try
         {
-            debug("signing raw transaction...");
-            const signedTransaction = await get(this.bcreg + " -named signrawtransaction hexstring=" + rawTransaction);
-            //debug("signedTransaction:" + signedTransaction);
+            this.log.debug("signing " + rawTransaction.length + " raw transactions...");
+            const signedTransaction = await this.client.signrawtransaction(rawTransaction);
+            this.log.debug("signedTransaction:" + signedTransaction);
             return signedTransaction;
         }
         catch(err)
         {
-            console.log("Error from signTransaction: " + err);
+            this.log.error("signTransaction: " + err);
         }
     }
 
-    async sendTransaction(signedTransaction)
+    async sendTransaction(signedTransactions) // signedTransactions: Array of strings
     {
         try
         {
-            debug("sending raw transaction...");
-            const hashHexTransaction = await get(this.bcreg + " -named sendrawtransaction hexstring=" + JSON.parse(signedTransaction).hex);
-            debug("hashHexTransaction: " + hashHexTransaction);
+            this.log.debug("sending " + signedTransactions.length + " transaction...");
+            const hashHexTransaction = await this.client.sendrawtransaction(signedTransaction);
+            this.log.debug("hashHexTransaction: " + hashHexTransaction);
             return hashHexTransaction;
         }
         catch(err)
         {
-            console.log("Error from sendTransaction: " + err);
+            this.log.error("sendTransaction: " + err);
         }
     }
 
-    async generate(blocks)
+    async generate(numberOfBlocks) // numberOfBlocks: Number
     {
         try
         {
-            console.log("generating new block...");
-            const hashBlock = await get(this.bcreg + " generate " + blocks);
-            console.log("hashBlock:" + hashBlock);
-            return hashBlock;
+            this.log.info("generating " + numberOfBlocks + " of new blocks...");
+            const arrayOfHashesOfBlocks = await this.client.generate(numberOfBlocks);
+            this.log.info("hashBlock:" + JSON.stringify(arrayOfHashesOfBlocks));
+            return arrayOfHashesOfBlocks;
         }
         catch(err)
         {
-            console.log("Error from generate: " + err);
+            this.log.error("generate: " + err);
         }
     }
 
     //generate-create-sign transaction
-    async gcsTx (utxo, quantity)
+    async gcsTx (utxo, quantity) // utxo: Array of Objects; quantity: Number
     {
         try
         {
-            const destinationAddresses = await this.generateNewAddress(quantity);
+            const destinationAddresses = await this.generateNewAddresses(quantity);
             const rawTransaction = await this.createRawTransaction(utxo, destinationAddresses);
-            if(rawTransaction == null) { return null; }
-            const signedTransaction = await this.signTransaction(rawTransaction);
+            if(rawTransaction == null) throw new Error("Raw Transaction is null");
+            const signedTransaction = await this.signTransaction([rawTransaction]);
             return signedTransaction;
         }
         catch(err)
         {
-            console.log("Error from gcsTx: " + err);
+            this.log.error("gcsTx: " + err);
         }
     }
 
@@ -211,13 +159,14 @@ class Bitcoin
 
             for (let i in toSendTXOs) 
             {
-                const hashHexTransaction = await this.sendTransaction(toSendTXOs[i]);
+                const hashHexTransaction = await this.sendTransaction([toSendTXOs[i]]);
                 const mempool = await this.getMemPoolInfo();
                 loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
             }
         }
-        catch (err) {
-            console.log("Error from gcssTx: " + err);
+        catch (err) 
+        {
+            this.log.error("gcssTx: " + err);
         }
     }
 
@@ -225,29 +174,14 @@ class Bitcoin
     {
         try
         {
-            debug("calling getmempoolinfo...");
-            const info = await get(this.bcreg + " getmempoolinfo");
-            debug("getmempoolinfo: " + info);
-            return JSON.parse(info);
+            this.log.debug("calling getmempoolinfo...");
+            const info = await this.client.getmempoolinfo();
+            this.log.debug("getmempoolinfo: " + info);
+            return info;
         }
         catch(err)
         {
-            debug("Error from getMemPoolInfo: " + err);
-        }
-    }
-
-    async generateTime(blocks)
-    {
-        try
-        {
-            console.log("generating new block with time...");
-            const output = await get("time " + this.bcreg + " generate " + blocks);
-            console.log("output:" + output);
-            return output;
-        }
-        catch(err)
-        {
-            console.log("Error from generateTime: " + err);
+            this.log.error("getMemPoolInfo: " + err);
         }
     }
 }

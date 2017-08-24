@@ -20,7 +20,7 @@ const map = (array, transform) =>
 const filter = (array, test) =>
 {
     const filtered = [];
-    for (const elem of array)
+    for(const elem of array)
     {
         if (test(elem))
         {
@@ -28,6 +28,16 @@ const filter = (array, test) =>
         }        
     }
     return filtered;
+}
+
+const reduce = (array, combine, start = 0) =>
+{
+    const current = start;
+    for(const elem of array)
+    {
+        current = combine(current, elem);
+    }
+    return current;
 }
 
 const sip = (array, preChunk) =>
@@ -112,5 +122,6 @@ module.exports = {
     filter,
     sip,
     checkArg,
-    loading
+    loading,
+    reduce
 }
