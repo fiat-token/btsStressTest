@@ -29,7 +29,7 @@ class Maker
         this.quantity = quantity;
         this.elaborateThreshold = elaborateThreshold;
         this.maxTXs = maxTXs;
-        this.format = "Cleaner";
+        this.format = "maker";
         this.log = new Logger(this.logFile, this.format);
 
         this.log.info("\nMaker parameters:");
