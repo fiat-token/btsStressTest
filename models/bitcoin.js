@@ -68,8 +68,7 @@ class Bitcoin
             if(amount <= 0) throw new Error("amount is " + amount);
             
             //creating recipients
-            const recipients = listAddresses.reduce( (result, item) => { result[item] = amount; return result;}, {} );
-            
+            const recipients = listAddresses.reduce( (result, address) => { result[address] = amount; return result;}, {} );
             const rawTransaction = await this.client.createrawtransaction(arrayUTXOs, recipients);
             this.log.debug("rawTransaction:" + rawTransaction);
             return rawTransaction;
