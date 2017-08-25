@@ -55,7 +55,7 @@ class Bitcoin
         }
     }
 
-    async createRawTransaction(arrayUTXOs, listAddresses) // arrayUTXOs: Array of Objects; listAddresses: Array of strings
+    async createRawTransaction(arrayUTXOs = [], listAddresses = []) // arrayUTXOs: Array of Objects; listAddresses: Array of strings
     {
         try
         {
@@ -82,14 +82,14 @@ class Bitcoin
         }
     }
 
-    async signTransaction(rawTransaction) // rawTransaction: Array of strings
+    async signTransaction(rawTransaction = []) // rawTransaction: Array of strings
     {
         try
         {
             this.log.debug("signing " + rawTransaction.length + " raw transactions...");
             const signedTransaction = await this.client.signrawtransaction(rawTransaction);
             this.log.debug("signedTransaction:" + signedTransaction);
-            return signedTransaction;
+            return signedTransaction.hex;
         }
         catch(err)
         {
@@ -97,7 +97,7 @@ class Bitcoin
         }
     }
 
-    async sendTransaction(signedTransactions) // signedTransactions: Array of strings
+    async sendTransaction(signedTransactions = []) // signedTransactions: Array of strings
     {
         try
         {

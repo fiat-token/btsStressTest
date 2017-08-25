@@ -27,10 +27,11 @@ class Logger
         {
             if(logLevel <= this.actualLevel)
             {
-                const str = "[ " + this.listLevel[logLevel] + ": TIME:" + Date.now() + " PID:" + process.pid + " " + this.format + " ] " + data + "\n";
+                const str = "[ " + this.listLevel[logLevel] + ": time:" + Date.now() + " pid:" + process.pid + " - " + this.format + " ] " + data;
 
-                if(this.onDisk) await appendPromisified(file, str);
-                if(this.onTerminal) process.stdout.write(str);
+                if(this.onDisk) await appendPromisified(file, str + "\n");
+                // if(this.onTerminal) process.stdout.write(str  + "\n");
+                if(this.onTerminal) console.log(str);
             }
         }
         catch(err)

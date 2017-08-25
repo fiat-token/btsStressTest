@@ -33,6 +33,7 @@ class callRPC
             }
             const body = JSON.stringify(bodyJSON);
             const res = await fetchPromise(this.socket, { method: 'POST',  headers: this.header, body: body})
+            //console.log(this.counter);
             const json = await res.json();
             if(json.error) throw new Error(json.error.message);
             return json.result;
@@ -64,28 +65,28 @@ class callRPC
         const argsOnlyDefined = args.filter( (elem) => {return elem != '' &&  typeof elem != 'undefined'})
         return argsOnlyDefined;
     }
-
-    async listunspent() { return await this.fetch('listunspent', {})};
-    async getblock(hash) { return await this.fetch('getblock', hash)};
-    async getblockcount() { return await this.fetch('getblockcount')};
-    async getblockhash(index) { return await this.fetch('getblockhash', index)}; // index: Array
-    async getblockheader(hash) { return await this.fetch('getblockheader', hash)};
-    async getdifficulty() { return await this.fetch('getdifficulty')};
-    async gettxout(txid, n) { return await this.fetch('gettxout', [txid, n])};
-    async gettxoutsetinfo(txid, n) { return await this.fetch('gettxoutsetinfo')};
-    async verifychain() { return await this.fetch('verifychain')};
-    async verifytxoutproof(proof) { return await this.fetch('verifytxoutproof', proof)};
-    async decoderawtransaction(hexstring) { return await this.fetch('decoderawtransaction', hexstring)};
-    async decodescript(hex) { return await this.fetch('decodescript', hex)};
-    async getrawtransaction(txid) { return await this.fetch('getrawtransaction', txid)};
-    async validateaddress(bitcoinaddress) { return await this.fetch('validateaddress', bitcoinaddress)};
-    async verifymessage(bitcoinaddress, signature, message) { return await this.fetch('verifymessage', [bitcoinaddress, signature, message])};
-    async getnewaddress() { return await this.fetch('getnewaddress', [])};
-    async createrawtransaction(senders, recipients) { return await this.fetch('createrawtransaction', [senders, recipients])};
-    async signrawtransaction(hex) { return await this.fetch('signrawtransaction', hex)}; // hex: Array
-    async sendrawtransaction(hex) { return await this.fetch('sendrawtransaction', hex)}; // hex: Array
-    async generate(blocks) { return await this.fetch('generate', blocks)}; // hex: Array
-    async getmempoolinfo() { return await this.fetch('getmempoolinfo', [])};
+    
+    async listunspent() { try { return await this.fetch('listunspent', {})} catch(err) { this.log.error("listunspent: " + err);} };
+    async getblock(hash) { try { return await this.fetch('getblock', hash)} catch(err) { this.log.error("getblock: " + err);} };
+    async getblockcount() { try { return await this.fetch('getblockcount')} catch(err) { this.log.error("getblockcount: " + err);} };
+    async getblockhash(index) { try { return await this.fetch('getblockhash', index)} catch(err) { this.log.error("getblockhash: " + err);} }; // index: Array
+    async getblockheader(hash) { try { return await this.fetch('getblockheader', hash)} catch(err) { this.log.error("getblockheader: " + err);} };
+    async getdifficulty() { try { return await this.fetch('getdifficulty')} catch(err) { this.log.error("getdifficulty: " + err);} };
+    async gettxout(txid, n) { try { return await this.fetch('gettxout', [txid, n])} catch(err) { this.log.error("gettxout: " + err);} };
+    async gettxoutsetinfo(txid, n) { try { return await this.fetch('gettxoutsetinfo')} catch(err) { this.log.error("gettxoutsetinfo: " + err);} };
+    async verifychain() { try { return await this.fetch('verifychain')} catch(err) { this.log.error("verifychain: " + err);} };
+    async verifytxoutproof(proof) { try { return await this.fetch('verifytxoutproof', proof)} catch(err) { this.log.error("verifytxoutproof: " + err);} };
+    async decoderawtransaction(hexstring) { try { return await this.fetch('decoderawtransaction', hexstring)} catch(err) { this.log.error("decoderawtransaction: " + err);} };
+    async decodescript(hex) { try { return await this.fetch('decodescript', hex)} catch(err) { this.log.error("decodescript: " + err);} };
+    async getrawtransaction(txid) { try { return await this.fetch('getrawtransaction', txid)} catch(err) { this.log.error("getrawtransaction: " + err);} };
+    async validateaddress(bitcoinaddress) { try { return await this.fetch('validateaddress', bitcoinaddress)} catch(err) { this.log.error("validateaddress: " + err);} };
+    async verifymessage(bitcoinaddress, signature, message) { try { return await this.fetch('verifymessage', [bitcoinaddress, signature, message])} catch(err) { this.log.error("verifymessage: " + err);} };
+    async getnewaddress() { try { return await this.fetch('getnewaddress', [])} catch(err) { this.log.error("getnewaddress: " + err);} };
+    async createrawtransaction(senders, recipients) { try { return await this.fetch('createrawtransaction', [senders, recipients])} catch(err) { this.log.error("createrawtransaction: " + err);} };
+    async signrawtransaction(hex) { try { return await this.fetch('signrawtransaction', hex)} catch(err) { this.log.error("signrawtransaction: " + err);} }; // hex: Array
+    async sendrawtransaction(hex) { try { return await this.fetch('sendrawtransaction', hex)} catch(err) { this.log.error("sendrawtransaction: " + err);} }; // hex: Array
+    async generate(blocks) { try { return await this.fetch('generate', blocks)} catch(err) { this.log.error("generate: " + err);} }; // hex: Array
+    async getmempoolinfo() { try { return await this.fetch('getmempoolinfo', [])} catch(err) { this.log.error("getmempoolinfo: " + err);} };
 }
 
 module.exports = callRPC;

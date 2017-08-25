@@ -42,21 +42,31 @@ class Maker
     {
         try
         {
-            console.log("\nStart making...");
-            const allUTXOs = await this.btc.getUTXOs("all");
-            console.log("all UTXOs: " + allUTXOs.length);
-            if(allUTXOs == null || allUTXOs == 0) { return null; }
-            let filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= this.elaborateThreshold} );
-            if(!filteredUTXOs)
-            {
-                console.log("no UTXO found with amount greater than " + this.elaborateThreshold);
-                return;
-            }
-            console.log("number of UTXOs over the threshold amount of " + this.elaborateThreshold + ": " + filteredUTXOs.length);
-            filteredUTXOs = this.maxTXs != 0 ? filteredUTXOs.slice(0, this.maxTXs) : filteredUTXOs;
+            this.log.info("Start making...");
+            
+            //get UTXOs
+            const allUTXOs = await this.btc.getUTXOs();
+            if(!allUTXOs || allUTXOs == 0) { this.log.info("no UTXO found"); return;}
+            this.log.info("all UTXOs: " + allUTXOs.length);
 
-            await this.btc.gcssTx(filteredUTXOs, this.quantity);
-           
+            // filter UTXOs
+            const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= this.elaborateThreshold} );
+            this.log.info("number of UTXOs over the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
+            if(filteredUTXOs.length == 0) { this.log.info("no UTXO found"); return;}
+            
+            //create raw transaction - sign - send 
+            const destinationAddresses = await this.btc.generateNewAddresses(this.quantity);
+            let arrayOfRawTx = [];
+            for(elem of filteredUTXOs)
+            {
+                const rawTx = await this.btc.createRawTransaction([elem], destinationAddresses);
+                arrayOfRawTx.push(rawTx);
+            }
+
+            const signedTx = await this.btc.signTransaction(arrayOfRawTx);
+            const hashTx = await this.btc.sendTransaction([signedTx]);
+            console.log(hashTx);
+
         }
         catch(err)
         {

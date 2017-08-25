@@ -28,13 +28,23 @@ class Cleaner
         try
         {
             this.log.info("Start cleaning...")
+            
+            //get UTXOs
             const allUTXOs = await this.btc.getUTXOs();
+            if(!allUTXOs || allUTXOs == 0) { this.log.info("no UTXO found"); return;}
             this.log.info("all UTXOs: " + allUTXOs.length);
-            if(allUTXOs == null || allUTXOs == 0) { return null; }
+
+            // filter UTXOs
             const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < this.cleanerThreshold } );
             this.log.info("number of UTXOs under the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
-            if(filteredUTXOs.length == 0) return;
-            await this.btc.gcssTx(sip(filteredUTXOs, this.dimBlock), 1);
+            if(filteredUTXOs.length == 0) { this.log.info("no UTXO found"); return;}
+            
+            //create raw transaction - sign - send 
+            const destinationAddress = await this.btc.generateNewAddresses(1);
+            const rawTx = await this.btc.createRawTransaction(filteredUTXOs, destinationAddress)
+            const signedTx = await this.btc.signTransaction([rawTx]);
+            const hashTx = await this.btc.sendTransaction([signedTx]);
+            console.log(hashTx);
         }
         catch(err)
         {
