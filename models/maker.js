@@ -28,14 +28,16 @@ class Maker
         this.quantity = quantity;
         this.elaborateThreshold = elaborateThreshold;
         this.maxTXs = maxTXs;
+        this.format = "Cleaner";
+        this.log = new Logger(this.logFile, this.format);
 
-        console.log("\nMaker parameters:");
-        console.log("fee= " + fee);
-        console.log("quantity= " + quantity);
-        console.log("logFile= " + logFile);
-        console.log("Threshold for elaborate= " + elaborateThreshold);
-        console.log("Max Transactions= " + maxTXs);
-        console.log("");
+        this.log.info("\nMaker parameters:");
+        this.log.info("fee= " + fee);
+        this.log.info("quantity= " + quantity);
+        this.log.info("logFile= " + logFile);
+        this.log.info("Threshold for elaborate= " + elaborateThreshold);
+        this.log.info("Max Transactions= " + maxTXs);
+        this.log.info("");
     }
 
     async make()
@@ -65,16 +67,16 @@ class Maker
 
             const signedTx = await this.btc.signTransaction(arrayOfRawTx);
             const hashTx = await this.btc.sendTransaction([signedTx]);
-            console.log(hashTx);
+            this.log.info(hashTx);
 
         }
         catch(err)
         {
-            console.log("Error from make: " + err);
+            this.log.info("Error from make: " + err);
         }
         finally
         {
-            console.log("");
+            this.log.info("");
         }
     }
 }
