@@ -54,15 +54,17 @@ class Maker
 
             // filter UTXOs
             const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= this.elaborateThreshold} );
-            this.log.info("number of UTXOs over the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
-            if(filteredUTXOs.length == 0) { this.log.info("no UTXO found"); return;}
-            
+            this.log.info("number of UTXOs over the threshold amount of " + this.elaborateThreshold + ": " + filteredUTXOs.length);
+            if(!filteredUTXOs || filteredUTXOs.length == 0) { this.log.info("no UTXO found"); return;}
+            this.log.trace("filtered utxo:" + JSON.stringify(filteredUTXOs));
             //create raw transaction - sign - send 
             const destinationAddresses = await this.btc.generateNewAddresses(this.quantity);
             let arrayOfRawTx = [];
+        
             for(elem of filteredUTXOs)
             {
                 const rawTx = await this.btc.createRawTransaction([elem], destinationAddresses);
+                //this.log.trace("rawtx prodotta per elem:" + rawTx);
                 arrayOfRawTx.push(rawTx);
             }
 
