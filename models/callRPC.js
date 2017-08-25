@@ -7,7 +7,7 @@ class callRPC
 {
     constructor(connectionParams) 
     {
-        this.log = new Logger("callRPC.log", "callRPC");
+        this.log = new Logger("callRPC.log", "callRPC.js");
         this.user = connectionParams.user;
         this.pass = connectionParams.pass;
         this.header = { 'Authorization': this.getBasicAuth(this.user, this.pass) };
@@ -40,7 +40,7 @@ class callRPC
         }
         catch(err)
         {
-            this.log.error("fetch: " + err);
+            this.log.error("fetch-" + method + ": " + err);
         }
     }
 

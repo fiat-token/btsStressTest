@@ -18,7 +18,7 @@ class Bitcoin
         } 
         this.client = new callRPC(this.connectionParams);
         this.file = checkArg(process.env.logFile, "test.log");
-        this.format = "Bitcoin";
+        this.format = "bitcoin.js";
         this.log = new Logger(this.file, this.format);
     }
 

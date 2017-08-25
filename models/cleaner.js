@@ -13,7 +13,7 @@ class Cleaner
         this.logFile = logFile;
         this.cleanerThreshold = cleanerThreshold;
         this.dimBlock = dimBlock;
-        this.format = "cleaner";
+        this.format = "cleaner.js";
         this.log = new Logger(this.logFile, this.format);
         this.log.info("Cleaner parameters:");
         this.log.info("fee= " + this.fee);
