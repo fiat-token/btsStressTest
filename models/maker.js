@@ -5,7 +5,6 @@ const debug = require('debug')('maker');
 const Bitcoin = require('./bitcoin');
 const { log, filter, sip, checkArg, loading } = require('../libs');
 const Logger = require('./logger');
-const { sleep } = require('sleep');
 
 //default params
 require('dotenv').load();
@@ -56,22 +55,16 @@ class Maker
             const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= this.elaborateThreshold} );
             this.log.info("number of UTXOs over the threshold amount of " + this.elaborateThreshold + ": " + filteredUTXOs.length);
             if(!filteredUTXOs || filteredUTXOs.length == 0) { this.log.info("no UTXO found"); return;}
-            this.log.trace("filtered utxo:" + JSON.stringify(filteredUTXOs));
+
             //create raw transaction - sign - send 
             const destinationAddresses = await this.btc.generateNewAddresses(this.quantity);
-            let arrayOfRawTx = [];
-        
-            for(elem of filteredUTXOs)
-            {
-                const rawTx = await this.btc.createRawTransaction([elem], destinationAddresses);
-                //this.log.trace("rawtx prodotta per elem:" + rawTx);
-                arrayOfRawTx.push(rawTx);
-            }
-
+            const onlyDefined = destinationAddresses.filter( elem => { return typeof elem !== 'undefined'; } );
+            const promises = filteredUTXOs.map( elem => this.btc.createRawTransaction([elem], onlyDefined) );
+            const arrayOfRawTx = await Promise.all(promises);
             const signedTx = await this.btc.signTransaction(arrayOfRawTx);
-            const hashTx = await this.btc.sendTransaction([signedTx]);
-            this.log.info(hashTx);
-
+            const hashTx = await this.btc.sendTransaction(signedTx);
+            this.log.info("fine: " + hashTx);
+            this.log.info(JSON.stringify(hashTx));
         }
         catch(err)
         {

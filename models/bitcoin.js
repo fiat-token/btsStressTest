@@ -55,7 +55,7 @@ class Bitcoin
         }
     }
 
-    async createRawTransaction(arrayUTXOs = [], listAddresses = []) // arrayUTXOs: Array of Objects; listAddresses: Array of strings
+    async createRawTransaction(arrayUTXOs = [{}], listAddresses = ['']) // arrayUTXOs: Array of Objects; listAddresses: Array of strings
     {
         try
         {
@@ -87,9 +87,10 @@ class Bitcoin
         try
         {
             this.log.debug("signing " + rawTransaction.length + " raw transactions...");
-            const signedTransaction = await this.client.signrawtransaction(rawTransaction);
-            this.log.debug("signedTransaction:" + signedTransaction);
-            return signedTransaction.hex;
+            const promises = rawTransaction.map((tx) => this.client.signrawtransaction(tx));
+            const listSignedTx = await Promise.all(promises);
+            const onlyHex = listSignedTx.map( (elem) => { return elem.hex;} );
+            return onlyHex;
         }
         catch(err)
         {
@@ -102,9 +103,9 @@ class Bitcoin
         try
         {
             this.log.debug("sending " + signedTransactions.length + " transaction...");
-            const hashHexTransaction = await this.client.sendrawtransaction(signedTransactions);
-            this.log.debug("hashHexTransaction: " + hashHexTransaction);
-            return hashHexTransaction;
+            const promises = signedTransactions.map((tx) => this.client.sendrawtransaction(tx));
+            const listHashHexTransaction = await Promise.all(promises);
+            return listHashHexTransaction;
         }
         catch(err)
         {

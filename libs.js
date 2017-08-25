@@ -24,7 +24,7 @@ const filter = (array, test) =>
         if (test(elem))
         {
             filtered.push(elem);
-        }        
+        }
     }
     return filtered;
 }
