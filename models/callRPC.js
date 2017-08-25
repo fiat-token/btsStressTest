@@ -32,9 +32,11 @@ class callRPC
                 id: this.counter++
             }
             const body = JSON.stringify(bodyJSON);
+            this.log.trace("question:" + body);
             const res = await fetchPromise(this.socket, { method: 'POST',  headers: this.header, body: body})
-            //console.log(this.counter);
+            //console.log("counter: " + this.counter);
             const json = await res.json();
+            this.log.trace("answer:" + JSON.stringify(json));
             if(json.error) throw new Error(json.error.message);
             return json.result;
         }

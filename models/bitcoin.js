@@ -22,7 +22,7 @@ class Bitcoin
         this.log = new Logger(this.file, this.format);
     }
 
-    async generateNewAddresses(howMany = 1) // howMany: Number
+    async generateNewAddresses(howMany = 1) // howMany: number
     {
         try
         {
