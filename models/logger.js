@@ -3,7 +3,8 @@
 const { promisify } = require('util');
 const { appendFile } = require('fs');
 const appendPromisified = promisify(appendFile);
-const writePromisified = promisify( (data) => { return process.stdout.write(data, 'utf-8') } );
+//const writePromisified = promisify( (data) => { return process.stdout.write(data, 'utf-8') } );
+const consoleLogPromisified = promisify( (data) => { return console.log(data) } );
 const { checkArg } = require('../libs');
 require('dotenv').load();
 
@@ -27,11 +28,10 @@ class Logger
         {
             if(logLevel <= this.actualLevel)
             {
-                const str = "[ " + this.listLevel[logLevel] + ": time:" + Date.now() + " pid:" + process.pid + " - " + this.format + " ] " + data;
-
-                if(this.onDisk) await appendPromisified(file, str + "\n");
+                const str = "[ time:" + new Date() + " pid:" + process.pid + " " + this.listLevel[logLevel] + ": " + this.format + " ] " + data;
+                //if(this.onDisk) await appendPromisified(file, str + "\n");
                 // if(this.onTerminal) process.stdout.write(str  + "\n");
-                if(this.onTerminal) console.log(str);
+                if(this.onTerminal) await consoleLogPromisified(str);
             }
         }
         catch(err)

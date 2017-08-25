@@ -42,7 +42,7 @@ class Cleaner
             //create raw transaction - sign - send 
             const destinationAddress = await this.btc.generateNewAddresses(1);
             const rawTx = await this.btc.createRawTransaction(filteredUTXOs, destinationAddress)
-            const signedTx = await this.btc.signTransaction(rawTx);
+            const signedTx = await this.btc.signTransaction([rawTx]);
             const hashTx = await this.btc.sendTransaction(signedTx);
             this.log.info(hashTx);
         }

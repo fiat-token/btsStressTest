@@ -43,8 +43,7 @@ class Bitcoin
         {
             this.log.debug("retrieving " + howMany + " UTXOs...");
             const arrayUTXOs = await this.client.listunspent();
-            if(! howMany != "all") arrayUTXOs = arrayUTXOs.slice(0, howMany);
-            return arrayUTXOs;
+            return howMany ? arrayUTXOs.slice(0, howMany) : arrayUTXOs;
         }
         catch(err)
         {
@@ -58,14 +57,14 @@ class Bitcoin
         {
             this.log.debug("creating a raw transaction...");
             //calculate fee and final amount for each address
-            const totalAmount = arrayUTXOs.reduce( (a, b) => a.amount + b.amount );
+            const totalAmount = arrayUTXOs.reduce( (a, b) => a + b.amount, 0 );
             const amount = ( (totalAmount - this.fee) / listAddresses.length ).toFixed(8);;
             this.log.debug("total number of UTXOs: " + arrayUTXOs.length);
             this.log.debug("total number of addresses: " + listAddresses.length);
             this.log.debug("fee: " + this.fee);
-            this.log.debug("totalAmount: " + amount);
+            this.log.debug("totalAmount: " + totalAmount);
             this.log.debug("amount for each address: " + amount);
-            if(amount <= 0) throw new Error("amount is " + amount);
+            if(amount <= 0 || isNaN(amount)) throw new Error("amount is " + amount);
             
             //creating recipients
             const recipients = listAddresses.reduce( (result, address) => { result[address] = amount; return result;}, {} );
