@@ -6,37 +6,37 @@ const readline = require('readline');
 
 const execPromisified = promisify(exec);
 
-const map = (array, transform) =>
+const map = (obj, transform) =>
 {
-    const mapped = [];
-    for (const elem of array)
-    {
-        mapped.push(transform(elem));
-    }
-    return mapped;
+	const mapped = {};
+	for (const key in obj)
+	{
+		mapped[key] = (transform(obj[key]));
+	}
+	return mapped;
 }
 
-const filter = (array, test) =>
+const filter = (obj, test) =>
 {
-    const filtered = [];
-    for(const elem of array)
-    {
-        if (test(elem))
+	const mapped = {};
+	for (const key in obj)
+	{
+        if (test(obj[key]))
         {
-            filtered.push(elem);
+            mapped[key] = obj[key];
         }
-    }
-    return filtered;
+	}
+	return mapped;
 }
 
-const reduce = (array, combine, start = 0) =>
+const reduce = (obj, combine) =>
 {
-    let current = start;
-    for(const elem of array)
-    {
-        current = combine(current, elem);
-    }
-    return current;
+	let current = 0;
+	for (const value of obj)
+	{
+        current = combine(current, value);
+	}
+    return mapped;
 }
 
 const sip = (array, preChunk) =>

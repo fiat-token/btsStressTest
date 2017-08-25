@@ -35,16 +35,16 @@ class Cleaner
             this.log.info("all UTXOs: " + allUTXOs.length);
 
             // filter UTXOs
-            const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount < this.cleanerThreshold } );
+            const filteredUTXOs = allUTXOs.filter( utxo => utxo.amount < this.cleanerThreshold );
             this.log.info("number of UTXOs under the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
             if(filteredUTXOs.length == 0) { this.log.info("no UTXO found"); return;}
             
             //create raw transaction - sign - send 
             const destinationAddress = await this.btc.generateNewAddresses(1);
             const rawTx = await this.btc.createRawTransaction(filteredUTXOs, destinationAddress)
-            const signedTx = await this.btc.signTransaction([rawTx]);
-            const hashTx = await this.btc.sendTransaction([signedTx]);
-            console.log(hashTx);
+            const signedTx = await this.btc.signTransaction(rawTx);
+            const hashTx = await this.btc.sendTransaction(signedTx);
+            this.log.info(hashTx);
         }
         catch(err)
         {

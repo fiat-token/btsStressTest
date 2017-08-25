@@ -52,7 +52,7 @@ class Maker
             this.log.info("all UTXOs: " + allUTXOs.length);
 
             // filter UTXOs
-            const filteredUTXOs = filter(allUTXOs, (utxo) => { return utxo.amount >= this.elaborateThreshold} );
+            const filteredUTXOs = allUTXOs.filter( utxo => utxo.amount >= this.elaborateThreshold );
             this.log.info("number of UTXOs over the threshold amount of " + this.elaborateThreshold + ": " + filteredUTXOs.length);
             if(!filteredUTXOs || filteredUTXOs.length == 0) { this.log.info("no UTXO found"); return;}
 

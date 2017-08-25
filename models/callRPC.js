@@ -13,7 +13,6 @@ class callRPC
         this.header = { 'Authorization': this.getBasicAuth(this.user, this.pass) };
         this.socket = connectionParams.socket;
         this.counter = 0;
-        
         this.log.info("user: " + this.user);
         this.log.info("pass: " + this.pass);
         this.log.info("header: " + JSON.stringify(this.header));
@@ -21,7 +20,7 @@ class callRPC
         this.log.info("counter: " + this.counter);
     }
 
-    async fetch(method, param = 'null') // param = []
+    async fetch(method = '', param = 'null') // param = Array
     {
         try
         {
@@ -44,13 +43,12 @@ class callRPC
         }
     }
 
-    getBasicAuth (user, pass)
+    getBasicAuth (user = '', pass = '')
     {
         try
         {
             if(!user) throw new Error("no user has been given");
             if(!pass) throw new Error("no password has been given");
-    
             const strAuth = 'Basic ' + new Buffer(user + ':' + pass).toString('base64'); 
             return strAuth;
         }
@@ -58,12 +56,6 @@ class callRPC
         {
             this.log.error("getBasicAuth: " + err);
         }
-    }
-
-    parseArgs(args)
-    {
-        const argsOnlyDefined = args.filter( (elem) => {return elem != '' &&  typeof elem != 'undefined'})
-        return argsOnlyDefined;
     }
     
     async listunspent() { try { return await this.fetch('listunspent', {})} catch(err) { this.log.error("listunspent: " + err);} };

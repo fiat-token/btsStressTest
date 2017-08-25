@@ -28,8 +28,7 @@ class Bitcoin
         {
             this.log.debug("generating " + howMany + " new addresses...");
             const promises = range(howMany).map(() => this.client.getnewaddress());
-            let listAddress = await Promise.all(promises);
-         //   if(!listAddress instanceof Array) listAddress = new Array(listAddress);
+            const listAddress = await Promise.all(promises);
             return listAddress;
         }
         catch(err)
@@ -38,15 +37,13 @@ class Bitcoin
         }
     }
 
-    async getUTXOs(howMany) // howMany: Number
+    async getUTXOs(howMany = 1)
     {
         try
         {
-            let showNumber = howMany;
-            if(!howMany) showNumber = "all";
-            this.log.debug("retrieving " + showNumber + " UTXOs...");
+            this.log.debug("retrieving " + howMany + " UTXOs...");
             const arrayUTXOs = await this.client.listunspent();
-            if(howMany) arrayUTXOs = arrayUTXOs.slice(0, howMany);
+            if(! howMany != "all") arrayUTXOs = arrayUTXOs.slice(0, howMany);
             return arrayUTXOs;
         }
         catch(err)
@@ -55,13 +52,13 @@ class Bitcoin
         }
     }
 
-    async createRawTransaction(arrayUTXOs = [{}], listAddresses = ['']) // arrayUTXOs: Array of Objects; listAddresses: Array of strings
+    async createRawTransaction(arrayUTXOs = [{}], listAddresses = [''])
     {
         try
         {
             this.log.debug("creating a raw transaction...");
             //calculate fee and final amount for each address
-            const totalAmount = reduce(arrayUTXOs, (a, b) => { return a + b.amount;});
+            const totalAmount = arrayUTXOs.reduce( (a, b) => a.amount + b.amount );
             const amount = ( (totalAmount - this.fee) / listAddresses.length ).toFixed(8);;
             this.log.debug("total number of UTXOs: " + arrayUTXOs.length);
             this.log.debug("total number of addresses: " + listAddresses.length);
@@ -69,9 +66,10 @@ class Bitcoin
             this.log.debug("totalAmount: " + amount);
             this.log.debug("amount for each address: " + amount);
             if(amount <= 0) throw new Error("amount is " + amount);
+            
             //creating recipients
-            let recipients = {};
-            for(const elem of listAddresses) recipients[elem] = amount; 
+            const recipients = listAddresses.reduce( (result, item) => { result[item] = amount; return result;}, {} );
+            
             const rawTransaction = await this.client.createrawtransaction(arrayUTXOs, recipients);
             this.log.debug("rawTransaction:" + rawTransaction);
             return rawTransaction;
@@ -82,7 +80,7 @@ class Bitcoin
         }
     }
 
-    async signTransaction(rawTransaction = []) // rawTransaction: Array of strings
+    async signTransaction(rawTransaction = [''])
     {
         try
         {
@@ -98,7 +96,7 @@ class Bitcoin
         }
     }
 
-    async sendTransaction(signedTransactions = []) // signedTransactions: Array of strings
+    async sendTransaction(signedTransactions = [''])
     {
         try
         {
@@ -113,7 +111,7 @@ class Bitcoin
         }
     }
 
-    async generate(numberOfBlocks) // numberOfBlocks: Number
+    async generate(numberOfBlocks = 1) 
     {
         try
         {
@@ -125,48 +123,6 @@ class Bitcoin
         catch(err)
         {
             this.log.error("generate: " + err);
-        }
-    }
-
-    //generate-create-sign transaction
-    async gcsTx (utxo, quantity) // utxo: Array of Objects; quantity: Number
-    {
-        try
-        {
-            const destinationAddresses = await this.generateNewAddresses(quantity);
-            const rawTransaction = await this.createRawTransaction(utxo, destinationAddresses);
-            if(rawTransaction == null) throw new Error("Raw Transaction is null");
-            const signedTransaction = await this.signTransaction([rawTransaction]);
-            return signedTransaction.hex;
-        }
-        catch(err)
-        {
-            this.log.error("gcsTx: " + err);
-        }
-    }
-
-    //generate-create-sign-send transaction
-    async gcssTx(filteredUTXOs, quantity) 
-    {
-        try 
-        {
-            let toSendTXOs = [];
-            for (const elem of filteredUTXOs) 
-            {
-                toSendTXOs.push(await this.gcsTx(elem, quantity));
-                loading("Number of tx ready to send: " + toSendTXOs.length);
-            }
-
-            for (let i in toSendTXOs) 
-            {
-                const hashHexTransaction = await this.sendTransaction([toSendTXOs[i]]);
-                const mempool = await this.getMemPoolInfo();
-                loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
-            }
-        }
-        catch (err) 
-        {
-            this.log.error("gcssTx: " + err);
         }
     }
 
