@@ -4,6 +4,7 @@
 const debug = require('debug')('maker');
 const Bitcoin = require('./bitcoin');
 const { log, filter, sip, checkArg, loading } = require('../libs');
+const Logger = require('./logger');
 const { sleep } = require('sleep');
 
 //default params
