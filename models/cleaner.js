@@ -15,7 +15,6 @@ class Cleaner
 
         this.log.info("Cleaner parameters:");
         this.log.info("fee: " + fee);
-        this.log.info("quantity: " + this.quantity);
         this.log.info("logFile: " + this.logFile);
         this.log.info("threshold: " + this.cleanerThreshold);
         this.log.info("");
@@ -35,7 +34,7 @@ class Cleaner
             // filter UTXOs
             const filteredUTXOs = allUTXOs.filter( utxo => utxo.amount < this.cleanerThreshold );
             this.log.info("number of UTXOs under the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
-            if(!filteredUTXOs) { this.log.info("no UTXO left"); return;}
+            if(filteredUTXOs.length < 1) { this.log.info("no UTXO left"); return;}
             
             //create raw transaction - sign - send 
             const destinationAddress = await this.btc.generateNewAddresses(1);

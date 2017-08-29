@@ -36,7 +36,7 @@ class Maker
             // filter UTXOs
             const filteredUTXOs = allUTXOs.filter( utxo => utxo.amount >= this.elaborateThreshold );
             this.log.info("number of UTXOs over the threshold amount of " + this.elaborateThreshold + ": " + filteredUTXOs.length);
-            if(!filteredUTXOs) { this.log.info("no UTXO left"); return;}
+            if(filteredUTXOs.length < 1) { this.log.info("no UTXO left"); return;}
 
             //create raw transaction - sign - send 
             const destinationAddresses = await this.btc.generateNewAddresses(this.quantity);
