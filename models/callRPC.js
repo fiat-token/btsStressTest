@@ -75,8 +75,8 @@ class callRPC
     async verifymessage(bitcoinaddress = '', signature = '', message = '') { try { return await this.fetch('verifymessage', [bitcoinaddress, signature, message])} catch(err) { this.log.error("verifymessage: " + err);} };
     async getnewaddress() { try { return await this.fetch('getnewaddress', [])} catch(err) { this.log.error("getnewaddress: " + err);} };
     async createrawtransaction(senders = [], recipients = {}) { try { return await this.fetch('createrawtransaction', [senders, recipients])} catch(err) { this.log.error("createrawtransaction: " + err);} };
-    async signrawtransaction(hex= []) { try { return await this.fetch('signrawtransaction', [hex])} catch(err) { this.log.error("signrawtransaction: " + err);} }; // hex: Array
-    async sendrawtransaction(hex = []) { try { return await this.fetch('sendrawtransaction', [hex])} catch(err) { this.log.error("sendrawtransaction: " + err);} }; // hex: Array
+    async signrawtransaction(hex= '') { try { return await this.fetch('signrawtransaction', hex)} catch(err) { this.log.error("signrawtransaction: " + err);} }; // hex: Array
+    async sendrawtransaction(hex = []) { try { return await this.fetch('sendrawtransaction', hex)} catch(err) { this.log.error("sendrawtransaction: " + err);} }; // hex: Array
     async generate(blocks = 1) { try { return await this.fetch('generate', blocks)} catch(err) { this.log.error("generate: " + err);} }; 
     async getmempoolinfo() { try { return await this.fetch('getmempoolinfo', [])} catch(err) { this.log.error("getmempoolinfo: " + err);} };
 }
