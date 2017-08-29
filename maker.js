@@ -1,25 +1,24 @@
 'use strict';
 
-//libs
 const debug = require('debug')('mainmaker');
 const Maker = require('./models/maker');
 const { checkArg } = require('./libs');
-
-//default params
 require('dotenv').load();
 
-const fee = checkArg(process.env.fee, 0.00000001);
-const quantity = checkArg(process.env.quantity, 1);
-const logFile = checkArg(process.env.logFileMaker, "maker.log");
-const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
-const maxTXs = checkArg(process.env.maxTXs, 100);
+const makerfee = checkArg(process.env.makerfee, 0.00000001);
+const makerLogFile = checkArg(process.env.makerLogFile, "maker.log");
+const makerQuantity = checkArg(process.env.makerQuantity, 1);
+const makerThreshold = checkArg(process.env.makerThreshold, 0.01);
+const makerLogOnDisk = checkArg(process.env.makerLogOnDisk, false);
+const makerLogOnTerminal = checkArg(process.env.makerLogOnTerminal, true);
+const makerLogFormat = checkArg(process.env.makerLogFormat, "mainmaker");
+const makerLogLevel = checkArg(process.env.makerLogLevel, 3);
 
-//main 
 const main = async () =>
 {
     try
     {
-        const maker = new Maker(fee, logFile, quantity, elaborateThreshold, maxTXs);
+        const maker = new Maker(makerfee, makerLogFile, makerQuantity, makerThreshold, makerLogLevel, makerLogOnDisk, makerLogOnTerminal, makerLogFormat);
         await maker.make();
     }
     catch(err)

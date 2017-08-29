@@ -1,32 +1,28 @@
 'use strict';
 
-//libs
 const Logger = require('./models/logger');
 const Cleaner = require('./models/cleaner');
-const { checkArg, map } = require('./libs');
+const { checkArg } = require('./libs');
 require('dotenv').load();
 
-//default params
-const logFile = checkArg(process.env.logFileCleaner, "cleaner.log");
-const format = "maincleaner";
-const log = new Logger(logFile, format);
-
-const fee = checkArg(process.env.fee, 0.00000001);
-const quantity = checkArg(process.env.quantity, 1);
+const cleanerFee = checkArg(process.env.cleanerFee, 0.00000001);
+const cleanerlogFile = checkArg(process.env.cleanerlogFile, "cleaner.log");
 const cleanerThreshold = checkArg(process.env.cleanerThreshold, 0.01);
-const dimBlock = checkArg(process.env.dimBlock, 250);
+const cleanerLogOnDisk = checkArg(process.env.cleanerLogOnDisk, false);
+const cleanerLogOnTerminal = checkArg(process.env.cleanerLogOnTerminal, true);
+const cleanerLogFormat = checkArg(process.env.cleanerLogFormat, "maincleaner");
+const cleanerLogLevel = checkArg(process.env.cleanerLogLevel, 3);
 
-//main
 const main = async () =>
 {
     try
     {
-        const cleaner = new Cleaner(fee, logFile, cleanerThreshold, dimBlock);
+        const cleaner = new Cleaner(cleanerFee, cleanerlogFile, cleanerThreshold, cleanerLogLevel, cleanerLogOnDisk, cleanerLogOnTerminal, cleanerLogFormat);
         await cleaner.clean();
     }
     catch(err)
     {
-        log.error("main: " + err);
+        log.error("maincleaner: " + err);
     }
 }
 

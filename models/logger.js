@@ -3,22 +3,17 @@
 const { promisify } = require('util');
 const { appendFile } = require('fs');
 const appendPromisified = promisify(appendFile);
-//const writePromisified = promisify( (data) => { return process.stdout.write(data, 'utf-8') } );
 const consoleLogPromisified = promisify( (data) => { return console.log(data) } );
-const { checkArg } = require('../libs');
-require('dotenv').load();
-
-//append format finale
 
 class Logger
 {
-    constructor(file, format = '') 
+    constructor(file = 'logger.log', format = '', actualLevel = 3, onDisk = false, onTerminal = true) 
     {
         this.file = file;
         this.format = format;
-        this.actualLevel= checkArg(process.env.logLevel, 1);
-        this.onDisk = checkArg(process.env.onDisk, false);
-        this.onTerminal = checkArg(process.env.onTerminal, true);
+        this.actualLevel= actualLevel;
+        this.onDisk = onDisk;
+        this.onTerminal = onTerminal;
         this.listLevel = {1: "ERROR", 2: "WARN", 3: "INFO", 4:"DEBUG", 5: "TRACE"}; 
     }
 
@@ -29,9 +24,10 @@ class Logger
             if(logLevel <= this.actualLevel)
             {
                 const str = "[ time:" + new Date() + " pid:" + process.pid + " " + this.listLevel[logLevel] + ": " + this.format + " ] " + data;
-                //if(this.onDisk) await appendPromisified(file, str + "\n");
-                // if(this.onTerminal) process.stdout.write(str  + "\n");
-                if(this.onTerminal) await consoleLogPromisified(str);
+                const promises = [];
+                if(this.onDisk) promises.push(appendPromisified(file, str + "\n"));
+                if(this.onTerminal) promises.push(consoleLogPromisified(str));
+                await Promise.all(promises);
             }
         }
         catch(err)

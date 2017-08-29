@@ -1,28 +1,26 @@
 'use strict';
 
 const Logger = require('./logger');
-const { get, map, range, log, loading, reduce, checkArg } = require('../libs');
 const callRPC = require('./callRPC');
+const { checkArg, range } = require('../libs');
 require('dotenv').load();
 
 class Bitcoin
 {
-    constructor(fee) 
+    constructor(fee = 0.01, logFile = 'bitcoin.log', format = 'bitcoin.js', actualLevel = 3, onDisk = false, onTerminal = true) 
     {
+        this.log = new Logger(logFile, format, actualLevel, onDisk, onTerminal);
         this.fee = fee;
         this.connectionParams =
         {
             user: checkArg(process.env.user, "regtest"),
             pass: checkArg(process.env.pass, "regtest"),
             socket: checkArg(process.env.socket, "http://localhost:8080")
-        } 
+        }
         this.client = new callRPC(this.connectionParams);
-        this.file = checkArg(process.env.logFile, "test.log");
-        this.format = "bitcoin.js";
-        this.log = new Logger(this.file, this.format);
     }
 
-    async generateNewAddresses(howMany = 1) // howMany: number
+    async generateNewAddresses(howMany = 1)
     {
         try
         {
@@ -56,9 +54,11 @@ class Bitcoin
         try
         {
             this.log.debug("creating a raw transaction...");
+
             //calculate fee and final amount for each address
             const totalAmount = arrayUTXOs.reduce( (a, b) => a + b.amount, 0 );
-            const amount = ( (totalAmount - this.fee) / listAddresses.length ).toFixed(8);;
+            const amount = ( (totalAmount - this.fee) / listAddresses.length ).toFixed(8);
+            
             this.log.debug("total number of UTXOs: " + arrayUTXOs.length);
             this.log.debug("total number of addresses: " + listAddresses.length);
             this.log.debug("fee: " + this.fee);

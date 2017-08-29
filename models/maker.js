@@ -1,42 +1,24 @@
 'use strict';
 
-//libs
-const debug = require('debug')('maker');
 const Bitcoin = require('./bitcoin');
-const { log, filter, sip, checkArg, loading } = require('../libs');
 const Logger = require('./logger');
 
-//default params
-require('dotenv').load();
-
-const fee = checkArg(process.env.fee, 0.00000001);
-const quantity = checkArg(process.env.quantity, 1);
-const logFile = checkArg(process.env.logFileMaker, "maker.log");
-const cleaning = checkArg(process.env.cleaning, true);
-const cleanerThreshold = checkArg(process.env.cleanerThreshold, 0.01);
-const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
-const dimBlock = checkArg(process.env.dimBlock, 250);
-const maxTXs = checkArg(process.env.maxTXs, 100);
-
-//elaborate
 class Maker
 {
-    constructor(fee, logFile, quantity, elaborateThreshold, maxTXs)
+    constructor(fee = 0.01, logFile = 'maker.log', quantity = 1, elaborateThreshold = 1, actualLevel = 3, onDisk = false, onTerminal = true, format = "maker.js")
     {
         this.btc = new Bitcoin(fee);
-        this.logFile = logFile;
         this.quantity = quantity;
         this.elaborateThreshold = elaborateThreshold;
-        this.maxTXs = maxTXs;
-        this.format = "maker.js";
-        this.log = new Logger(this.logFile, this.format);
+        this.logFile = logFile;
+        this.format = format;
+        this.log = new Logger(this.logFile, this.format, actualLevel, onDisk, onTerminal);
 
-        this.log.info("\nMaker parameters:");
-        this.log.info("fee= " + fee);
-        this.log.info("quantity= " + quantity);
-        this.log.info("logFile= " + logFile);
-        this.log.info("Threshold for elaborate= " + elaborateThreshold);
-        this.log.info("Max Transactions= " + maxTXs);
+        this.log.info("Maker parameters:");
+        this.log.info("fee: " + fee);
+        this.log.info("quantity: " + this.quantity);
+        this.log.info("logFile: " + this.logFile);
+        this.log.info("threshold: " + this.elaborateThreshold);
         this.log.info("");
     }
 
@@ -48,27 +30,27 @@ class Maker
             
             //get UTXOs
             const allUTXOs = await this.btc.getUTXOs();
-            if(!allUTXOs || allUTXOs == 0) { this.log.info("no UTXO found"); return;}
+            if(!allUTXOs) { this.log.info("no UTXO found"); return;}
             this.log.info("all UTXOs: " + allUTXOs.length);
 
             // filter UTXOs
             const filteredUTXOs = allUTXOs.filter( utxo => utxo.amount >= this.elaborateThreshold );
             this.log.info("number of UTXOs over the threshold amount of " + this.elaborateThreshold + ": " + filteredUTXOs.length);
-            if(!filteredUTXOs || filteredUTXOs.length == 0) { this.log.info("no UTXO found"); return;}
+            if(!filteredUTXOs) { this.log.info("no UTXO left"); return;}
 
             //create raw transaction - sign - send 
             const destinationAddresses = await this.btc.generateNewAddresses(this.quantity);
             const onlyDefined = destinationAddresses.filter( elem => { return typeof elem !== 'undefined'; } );
             const promises = filteredUTXOs.map( elem => this.btc.createRawTransaction([elem], onlyDefined) );
+
             const arrayOfRawTx = await Promise.all(promises);
             const signedTx = await this.btc.signTransaction(arrayOfRawTx);
             const hashTx = await this.btc.sendTransaction(signedTx);
-            this.log.info("fine: " + hashTx);
-            this.log.info(JSON.stringify(hashTx));
+            this.log.info("end - hash result of sendrawtransaction:" + JSON.stringify(hashTx));
         }
         catch(err)
         {
-            this.log.info("Error from make: " + err);
+            this.log.info("make: " + err);
         }
         finally
         {

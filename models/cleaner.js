@@ -1,25 +1,23 @@
 'use strict';
 
-//libs
 const Logger = require('./logger');
 const Bitcoin = require('./bitcoin');
-const { filter, sip, loading, map } = require('../libs');
 
 class Cleaner
 {
-    constructor(fee, logFile, cleanerThreshold, dimBlock)
+    constructor(fee = 0.01, logFile = 'cleaner.log', cleanerThreshold = 1, actualLevel = 3, onDisk = false, onTerminal = true, format = "cleaner.js")
     {
         this.btc = new Bitcoin(fee);
-        this.logFile = logFile;
         this.cleanerThreshold = cleanerThreshold;
-        this.dimBlock = dimBlock;
-        this.format = "cleaner.js";
-        this.log = new Logger(this.logFile, this.format);
+        this.logFile = logFile;
+        this.format = format;
+        this.log = new Logger(this.logFile, this.format, actualLevel, onDisk, onTerminal);
+
         this.log.info("Cleaner parameters:");
-        this.log.info("fee= " + this.fee);
-        this.log.info("logFile= " + this.logFile);
-        this.log.info("Threshold for cleaner= " + this.cleanerThreshold);
-        this.log.info("Block dimension= " + this.dimBlock);
+        this.log.info("fee: " + fee);
+        this.log.info("quantity: " + this.quantity);
+        this.log.info("logFile: " + this.logFile);
+        this.log.info("threshold: " + this.cleanerThreshold);
         this.log.info("");
     }
 
@@ -31,20 +29,20 @@ class Cleaner
             
             //get UTXOs
             const allUTXOs = await this.btc.getUTXOs();
-            if(!allUTXOs || allUTXOs == 0) { this.log.info("no UTXO found"); return;}
+            if(!allUTXOs) { this.log.info("no UTXO found"); return;}
             this.log.info("all UTXOs: " + allUTXOs.length);
 
             // filter UTXOs
             const filteredUTXOs = allUTXOs.filter( utxo => utxo.amount < this.cleanerThreshold );
             this.log.info("number of UTXOs under the threshold amount of " + this.cleanerThreshold + ": " + filteredUTXOs.length);
-            if(filteredUTXOs.length == 0) { this.log.info("no UTXO found"); return;}
+            if(!filteredUTXOs) { this.log.info("no UTXO left"); return;}
             
             //create raw transaction - sign - send 
             const destinationAddress = await this.btc.generateNewAddresses(1);
             const rawTx = await this.btc.createRawTransaction(filteredUTXOs, destinationAddress)
             const signedTx = await this.btc.signTransaction([rawTx]);
             const hashTx = await this.btc.sendTransaction(signedTx);
-            this.log.info(hashTx);
+            this.log.info("end - hash result of sendrawtransaction:" + JSON.stringify(hashTx));
         }
         catch(err)
         {
