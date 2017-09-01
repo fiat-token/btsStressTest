@@ -30,7 +30,7 @@ class Maker
             
             //get UTXOs
             const allUTXOs = await this.btc.getUTXOs();
-            if(!allUTXOs) { this.log.info("no UTXO found"); return;}
+            if(allUTXOs.length < 1) { this.log.info("no UTXO found"); return;}
             this.log.info("all UTXOs: " + allUTXOs.length);
 
             // filter UTXOs
@@ -54,7 +54,7 @@ class Maker
         }
         finally
         {
-            this.log.info("");
+            this.log.info("maker finished");
         }
     }
 }

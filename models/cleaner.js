@@ -28,7 +28,7 @@ class Cleaner
             
             //get UTXOs
             const allUTXOs = await this.btc.getUTXOs();
-            if(!allUTXOs) { this.log.info("no UTXO found"); return;}
+            if(allUTXOs.length < 1) { this.log.info("no UTXO found"); return;}
             this.log.info("all UTXOs: " + allUTXOs.length);
 
             // filter UTXOs
@@ -40,6 +40,7 @@ class Cleaner
             const destinationAddress = await this.btc.generateNewAddresses(1);
             const rawTx = await this.btc.createRawTransaction(filteredUTXOs, destinationAddress)
             const signedTx = await this.btc.signTransaction([rawTx]);
+            
             const hashTx = await this.btc.sendTransaction(signedTx);
             this.log.info("end - hash result of sendrawtransaction:" + JSON.stringify(hashTx));
         }
@@ -49,7 +50,7 @@ class Cleaner
         }
         finally
         {
-            this.log.info("");
+            this.log.info("cleaner finished");
         }
     }
 }

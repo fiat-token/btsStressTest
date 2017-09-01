@@ -35,7 +35,7 @@ class Bitcoin
         }
     }
 
-    async getUTXOs(howMany = 1)
+    async getUTXOs(howMany)
     {
         try
         {

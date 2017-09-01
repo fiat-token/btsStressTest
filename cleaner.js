@@ -1,6 +1,5 @@
 'use strict';
 
-const Logger = require('./models/logger');
 const Cleaner = require('./models/cleaner');
 const { checkArg } = require('./libs');
 require('dotenv').load();
@@ -18,7 +17,7 @@ const main = async () =>
     try
     {
         const cleaner = new Cleaner(cleanerFee, cleanerlogFile, cleanerThreshold, cleanerLogLevel, cleanerLogOnDisk, cleanerLogOnTerminal, cleanerLogFormat);
-        await cleaner.clean();
+        let pippo = await cleaner.clean();
     }
     catch(err)
     {
