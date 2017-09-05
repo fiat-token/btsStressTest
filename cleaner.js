@@ -17,7 +17,7 @@ const main = async () =>
     try
     {
         const cleaner = new Cleaner(cleanerFee, cleanerlogFile, cleanerThreshold, cleanerLogLevel, cleanerLogOnDisk, cleanerLogOnTerminal, cleanerLogFormat);
-        let pippo = await cleaner.clean();
+        await cleaner.clean();
     }
     catch(err)
     {
