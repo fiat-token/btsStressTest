@@ -1,3 +1,5 @@
+Stable version without RPC calls
+
 #btcStressTest
 Scripts for stressing the bitcoin core with multiple transactions
 
@@ -14,26 +16,19 @@ chmod +x nodejsInstaller.sh
 
 ./nodejsInstaller.sh
 
-HOWTO (FOREVER):
-
-In order to run application permanently, install forever:
-
-sudo npm install forever -g
-
-To check running process 
-
-forever list
 
 COMMANDS:
-
-#CONTINOUS TEST
-waitSec=3600 elaborateThreshold=0.000001 maxTXs=100 quantity=1 forever immortal.js
-
-#BULK TEST
 
 #Edit crontab file
 crontab -e
 
-#Add a new line (Run every night once at hour from 2 a.m. to 4 a.m. [AWS machine local time - in Italy from 0 a.m. to 2 a.m.] and send 10K txs)
+#Add the following new lines 
 
-0 2-4 * * * (bcreg="/usr/local/bin/bitcoin-cli" elaborateThreshold=0.00001 fee=0.00001 maxTXs=20 quantity=500 node /home/ubuntu/btsStressTest/maker.js && bcreg="/usr/local/bin/bitcoin-cli" elaborateThreshold=0.000001 fee=0.0000001 maxTXs=10000 quantity=1 node /home/ubuntu/btsStressTest/maker.js) > /home/ubuntu/btsStressTest/bulkStressTest.log
+#ContinousStressTest
+0 * * * * (bcreg="/usr/local/bin/bitcoin-cli" elaborateThreshold=0.000001 fee=0.0000001 maxTXs=10 quantity=5 node /home/ubuntu/btsStressTest/maker.js && sleep 10 && bcreg="/usr/local/bin/bitcoin-cli" elaborateThreshold=0.000001 fee=0.0000001 maxTXs=50 quantity=1 node /home/ubuntu/btsStressTest/maker.js) >> /home/ubuntu/btsStressTest/continousStressTest.log
+
+#BulkStressTest
+0 4-6 * * * (bcreg="/usr/local/bin/bitcoin-cli" elaborateThreshold=0.000001 fee=0.0000001 maxTXs=110 quantity=30 node /home/ubuntu/btsStressTest/maker.js && sleep 10 && bcreg="/usr/local/bin/bitcoin-cli" elaborateThreshold=0.000001 fee=0.0000001 maxTXs=3300 quantity=1 node /home/ubuntu/btsStressTest/maker.js) >> /home/ubuntu/btsStressTest/bulkStressTest.log
+
+#CleanerStressTest
+30 5 * * * (bcreg="/usr/local/bin/bitcoin-cli" cleanerThreshold=0.000001 fee=0.0000001 dimBlock=100 node /home/ubuntu/btsStressTest/cleaner.js)  >> /home/ubuntu/btsStressTest/cleanerStressTest.log
