@@ -15,7 +15,11 @@ class Bitcoin
     {
         this.bcreg = bcreg;
         this.fee = fee;
+        this.toSendTXOs = [];
+        
     }
+
+    
 
     async generateNewAddress(quantity)
     {
@@ -213,30 +217,31 @@ class Bitcoin
     {
         try 
         {
-            let toSendTXOs = [];
             for (const elem of filteredUTXOs) 
             {
-                toSendTXOs.push(await this.gcsTx(elem, quantity));
-                loading("Number of tx ready to send: " + toSendTXOs.length);
+                this.toSendTXOs.push(await this.gcsTx(elem, quantity));
+                loading("Number of tx ready to send: " + this.toSendTXOs.length);
             }
 
             rl.question('Can I send transactions? ', (answer) => {
-                console.log(`Start sending!`);
-
-                for (let i in toSendTXOs) 
-                {
-                    const hashHexTransaction = await this.sendTransaction(toSendTXOs[i]);
-                    const mempool = await this.getMemPoolInfo();
-                    loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
-                }
-
+                console.log("Start sending");
+                sendAfterPause();               
+              
                 rl.close();
-            });
-
+              });
             
         }
         catch (err) {
             console.log("Error from gcssTx: " + err);
+        }
+    }
+
+    async sendAfterPause() {
+        for (let i in this.toSendTXOs) 
+        {
+            const hashHexTransaction = await this.sendTransaction(toSendTXOs[i]);
+            const mempool = await this.getMemPoolInfo();
+            loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
         }
     }
 
