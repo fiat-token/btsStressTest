@@ -2,6 +2,12 @@
 
 const debug = require('debug')('bitcoin');
 const { get, map, range, log, loading } = require('../libs');
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 class Bitcoin
 {
@@ -214,12 +220,20 @@ class Bitcoin
                 loading("Number of tx ready to send: " + toSendTXOs.length);
             }
 
-            for (let i in toSendTXOs) 
-            {
-                const hashHexTransaction = await this.sendTransaction(toSendTXOs[i]);
-                const mempool = await this.getMemPoolInfo();
-                loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
-            }
+            rl.question('Can I send transactions? ', (answer) => {
+                console.log(`Start sending!`);
+
+                for (let i in toSendTXOs) 
+                {
+                    const hashHexTransaction = await this.sendTransaction(toSendTXOs[i]);
+                    const mempool = await this.getMemPoolInfo();
+                    loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
+                }
+
+                rl.close();
+            });
+
+            
         }
         catch (err) {
             console.log("Error from gcssTx: " + err);
