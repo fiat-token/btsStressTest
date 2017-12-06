@@ -239,9 +239,9 @@ class Bitcoin
     async sendAfterPause() {
         for (let i in this.toSendTXOs) 
         {
-            const hashHexTransaction = await this.sendTransaction(toSendTXOs[i]);
+            const hashHexTransaction = await this.sendTransaction(this.toSendTXOs[i]);
             const mempool = await this.getMemPoolInfo();
-            loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
+            loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + this.toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
         }
     }
 
