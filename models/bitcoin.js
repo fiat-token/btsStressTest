@@ -225,7 +225,7 @@ class Bitcoin
 
             rl.question('Can I send transactions? ', (answer) => {
                 console.log("Start sending");
-                sendAfterPause();               
+                this.sendAfterPause();               
               
                 rl.close();
               });
