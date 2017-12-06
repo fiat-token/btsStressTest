@@ -241,7 +241,7 @@ class Bitcoin
         {
             const hashHexTransaction = await this.sendTransaction(this.toSendTXOs[i]);
             const mempool = await this.getMemPoolInfo();
-            loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + this.toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction);
+            loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + this.toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction + "\n");
         }
     }
 
