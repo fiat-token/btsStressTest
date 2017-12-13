@@ -230,7 +230,7 @@ class Bitcoin
             //     rl.close();
             //   });
             const timeStampDec = Math.floor(Date.now() / 1000); 
-            this.writeOnFile(`readyToSend_${timeStampDec}`, this.toSendTXOs.map( (tx) => { return tx.hex; } ).toString());            
+            this.writeOnFile(`readyToSend_${timeStampDec}`, this.toSendTXOs.map( tx => JSON.parse(tx).hex ).toString());            
         }
         catch (err) {
             console.log("Error from gcssTx: " + err);
