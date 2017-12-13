@@ -223,7 +223,7 @@ class Bitcoin
                 loading("Number of tx ready to send: " + this.toSendTXOs.length);
             }
 
-            if (writeTxOnFile) 
+            if (this.writeTxOnFile) 
             {
                 const timeStampDec = Math.floor(Date.now() / 1000);
                 this.writeOnFile(`readyToSend_${timeStampDec}`, this.toSendTXOs.map(tx => JSON.parse(tx).hex).toString());
