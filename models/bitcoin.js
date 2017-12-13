@@ -3,6 +3,7 @@
 const debug = require('debug')('bitcoin');
 const { get, map, range, log, loading } = require('../libs');
 const readline = require('readline');
+const fs = require('fs'); 
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -223,13 +224,14 @@ class Bitcoin
                 loading("Number of tx ready to send: " + this.toSendTXOs.length);
             }
 
-            rl.question('Can I send transactions? ', (answer) => {
-                console.log("Start sending");
-                this.sendAfterPause();               
+            // rl.question('Can I send transactions? ', (answer) => {
+            //     console.log("Start sending");
+            //     this.sendAfterPause();               
               
-                rl.close();
-              });
-            
+            //     rl.close();
+            //   });
+            const timeStampDec = Math.floor(Date.now() / 1000); 
+            this.writeOnFile(`readyToSend_${timeStampDec}`, this.toSendTXOs.toString());            
         }
         catch (err) {
             console.log("Error from gcssTx: " + err);
@@ -244,6 +246,20 @@ class Bitcoin
             loading("mempoolsize: " + mempool.size + " - " + ++i + "/" + this.toSendTXOs.length + " - hashHexTransaction: " + hashHexTransaction + "\n");
         }
     }
+
+    async writeOnFile (nameFile, data)
+    {
+        try
+        {
+            const write = promisify(fs.writeFile);
+            await write(nameFile, data);
+        }
+        catch(err)
+        {
+            console.log(err);
+        }
+    }
+    
 
     async getMemPoolInfo()
     {
