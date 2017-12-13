@@ -4,6 +4,7 @@ const debug = require('debug')('bitcoin');
 const { get, map, range, log, loading } = require('../libs');
 const readline = require('readline');
 const fs = require('fs'); 
+const { promisify } = require('util');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -19,8 +20,6 @@ class Bitcoin
         this.toSendTXOs = [];
         
     }
-
-    
 
     async generateNewAddress(quantity)
     {
