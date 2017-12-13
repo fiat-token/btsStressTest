@@ -14,13 +14,14 @@ const quantity = checkArg(process.env.quantity, 1);
 const logFile = checkArg(process.env.logFileMaker, "maker.log");
 const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
 const maxTXs = checkArg(process.env.maxTXs, 100);
+const writeTxOnFile = checkArg(process.env.writeTxOnFile, false);
 
 //main 
 const main = async () =>
 {
     try
     {
-        const maker = new Maker(bcreg, fee, logFile, quantity, elaborateThreshold, maxTXs);
+        const maker = new Maker(bcreg, fee, logFile, quantity, elaborateThreshold, maxTXs, writeTxOnFile);
         await maker.make();
     }
     catch(err)

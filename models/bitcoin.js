@@ -13,12 +13,12 @@ const rl = readline.createInterface({
 
 class Bitcoin
 {
-    constructor(bcreg, fee) 
+    constructor(bcreg, fee, writeTxOnFile) 
     {
         this.bcreg = bcreg;
         this.fee = fee;
         this.toSendTXOs = [];
-        
+        this.writeTxOnFile = writeTxOnFile;
     }
 
     async generateNewAddress(quantity)
@@ -223,14 +223,21 @@ class Bitcoin
                 loading("Number of tx ready to send: " + this.toSendTXOs.length);
             }
 
-            // rl.question('Can I send transactions? ', (answer) => {
-            //     console.log("Start sending");
-            //     this.sendAfterPause();               
-              
-            //     rl.close();
-            //   });
-            const timeStampDec = Math.floor(Date.now() / 1000); 
-            this.writeOnFile(`readyToSend_${timeStampDec}`, this.toSendTXOs.map( tx => JSON.parse(tx).hex ).toString());            
+            if (writeTxOnFile) 
+            {
+                const timeStampDec = Math.floor(Date.now() / 1000);
+                this.writeOnFile(`readyToSend_${timeStampDec}`, this.toSendTXOs.map(tx => JSON.parse(tx).hex).toString());
+            }
+            else 
+            {
+                rl.question('\nCan I send transactions? ', (answer) => {
+                    console.log("Start sending");
+                    this.sendAfterPause();
+
+                    rl.close();
+                });
+            }
+                       
         }
         catch (err) {
             console.log("Error from gcssTx: " + err);

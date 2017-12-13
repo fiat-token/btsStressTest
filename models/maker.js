@@ -18,13 +18,14 @@ const cleanerThreshold = checkArg(process.env.cleanerThreshold, 0.01);
 const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
 const dimBlock = checkArg(process.env.dimBlock, 250);
 const maxTXs = checkArg(process.env.maxTXs, 100);
+const writeTxOnFile = checkArg(process.env.writeTxOnFile, false);
 
 //elaborate
 class Maker
 {
-    constructor(bcreg, fee, logFile, quantity, elaborateThreshold, maxTXs)
+    constructor(bcreg, fee, logFile, quantity, elaborateThreshold, maxTXs, writeTxOnFile)
     {
-        this.btc = new Bitcoin(bcreg, fee);
+        this.btc = new Bitcoin(bcreg, fee, writeTxOnFile);
         this.logFile = logFile;
         this.quantity = quantity;
         this.elaborateThreshold = elaborateThreshold;

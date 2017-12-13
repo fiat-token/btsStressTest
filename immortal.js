@@ -21,6 +21,7 @@ const logFileMaker = checkArg(process.env.logFileMaker, "logFileMaker.log");
 const quantity = checkArg(process.env.quantity, 1);
 const elaborateThreshold = checkArg(process.env.elaborateThreshold, 50);
 const maxTXs = checkArg(process.env.maxTXs, 100);
+const writeTxOnFile = checkArg(process.env.writeTxOnFile, false);
 
 //cleaner param
 const logFileCleaner = checkArg(process.env.logFileCleaner, "logFileCleaner.log");
@@ -32,7 +33,7 @@ const immortal = async () =>
 {
     try
     {
-        const maker = new Maker(bcreg, fee, logFileMaker, quantity, elaborateThreshold, maxTXs);
+        const maker = new Maker(bcreg, fee, logFileMaker, quantity, elaborateThreshold, maxTXs, writeTxOnFile);
         const cleaner = new Cleaner(bcreg, fee, logFileCleaner, cleanerThreshold, dimBlock);
         while (true) 
         {
